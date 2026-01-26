@@ -4,6 +4,8 @@ import Tags from './Tags.svelte';
 import CartItems from './Cart.svelte';
 import SearchBar from './SearchBar.svelte';
 import InfoWindow from './ModalWindow.svelte';
+import Checkout from './Checkout.svelte';
+import Delivery from './Delivery.svelte';
 
 document.addEventListener('DOMContentLoaded', () => 
 {
@@ -13,13 +15,15 @@ document.addEventListener('DOMContentLoaded', () =>
   const CartContainer = document.getElementById("cart-container") || null;
   const searchBar = document.getElementById("search-bar-container") || null;
   const modalWindow = document.getElementById("global-modal-window") || null;
+  const checkoutContainer = document.getElementById("checkout-container") || null;
+  const deliveryContainer = document.getElementById("delivery-container") || null;
 
   // DATA START
   const baseURL = document.getElementById("base-url-container").dataset.baseurl || null;
   const rawLoadData = document.getElementById('boot-data')?.textContent;
   const parsedData = rawLoadData ? JSON.parse(rawLoadData) : null;
   const productsData = parsedData ? parsedData.products : null;
-  const tagsData = productsData ? parsedData.tags : null;
+  const tagsData = parsedData ? parsedData.tags : null;
   // DATA END
 
   let ProductMount; 
@@ -87,7 +91,7 @@ document.addEventListener('DOMContentLoaded', () =>
       target: searchBar,
       props:
       {
-        itemsList: productsData,
+        itemsList: productsData ?? [],
         SelectedItems: handleSelection
       }
     });
@@ -100,4 +104,23 @@ document.addEventListener('DOMContentLoaded', () =>
       target: modalWindow
     });
   }
+
+  if(checkoutContainer)
+  {
+    mount(Checkout,
+      {
+        target: checkoutContainer
+      }
+    )
+  }
+
+  if(deliveryContainer)
+  {
+    mount(Delivery,
+      {
+        target: deliveryContainer
+      }
+    )
+  }
+  
 });

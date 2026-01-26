@@ -38,7 +38,8 @@ class HomeController extends BaseController
             $products[$i]['images'] = $images;
         };
 
-        return([
+        return(
+        [
             'products' => $products,
             'tags' => $tags
         ]);
@@ -150,6 +151,28 @@ class HomeController extends BaseController
             'cartItems' => $result,
             'username' => session()->get('username'),
             'info' => $loadInfo,
+        ]);
+    }
+
+    public function returnCheckout()
+    {
+        $loadInfo = $this->retrieveInfo();
+
+        return view('Checkout', 
+        [
+            'username' => session()->get('username'),
+            'info' => $loadInfo
+        ]);
+    }
+
+    public function Delivery()
+    {
+        $loadInfo = $this->retrieveInfo();
+
+        return view('Delivery', 
+        [
+            'username' => session()->get('username'),
+            'info' => $loadInfo
         ]);
     }
 }

@@ -55,7 +55,7 @@
     };
 </script>
 
-<div id="cart-container-wrapper" class="ms-4 me-2 mt-2 gap-4 d-flex justify-content-center align-items-center w-100" style="height: 83vh;">
+<div id="cart-container-wrapper" class="ms-4 me-2 mt-2 mb-2 gap-4 d-flex justify-content-center align-items-center w-100 flex-fill">
   <div id="cart-items-wrapper" class="w-75 bg-gradient border border-2 rounded h-100" style="overflow-y: auto; overflow-x: hidden;">
     <div class="row align-items-stretch m-2">
       {#each ItemsInCart as item}
@@ -93,7 +93,7 @@
         <img class="rounded img-fluid border border-2" src={'images/' + 'defaultImage.png'}>
     </div>
     <span class="fw-bold">Subtotal ({cartLength}) items: <span class="text-warning text-shadow">€{TotalPrice}</span></span>
-    <button class="btn btn-lng btn-danger mt-4">Proceed to Checkout</button>
+    <a class="btn btn-lng btn-danger mt-4" href="checkout">Proceed to Checkout</a>
   </div>
 </div>
 

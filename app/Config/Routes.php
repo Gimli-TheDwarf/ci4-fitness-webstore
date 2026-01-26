@@ -19,6 +19,7 @@ $routes->get('homepage', 'HomeController::HomeView');
 $routes->get('loadImages(:segment)', 'HomeController::loadImages/$1');
 
 $routes->get('cart', 'HomeController::Cart');
+$routes->get('delivery', 'HomeController::Delivery');
 
 $routes->post('AddItem/(:num)/(:num)', 'CartController::addItem/$1/$2');
 $routes->post('RemoveItem/(:segment)', 'CartController::removeItem/$1');
@@ -40,3 +41,5 @@ $routes->delete('deleteProductImage', 'AdminController::removeItemImage');
 $routes->post('updateImage', 'AdminController::updateItemImages');
 
 $routes->get('retrieveBasicInfo', 'HomeController::retrieveInfo');
+
+$routes->get('checkout', 'HomeController::returnCheckout');

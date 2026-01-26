@@ -24,6 +24,10 @@ html, body
     text-shadow: 0.5px 0.5px 1px black;
 }
 
+.text-blacker
+{
+    color: #000 !important;
+}
 .hover-fx-1:hover
 {
     transform: scale(1.15);
@@ -69,8 +73,19 @@ html, body
 
 #watermark
 {
+    position: relative;
     min-height: 5vh; 
-    border-top: 0.5rem solid rgb(25, 27, 31);
+    margin-top: 1.5rem;
+}
+
+#watermark::before
+{
+  content:"";
+  position:absolute;
+  left:0; right:0;
+  height: 1.5rem;
+  background: #212529;
+  top: -1.5rem;
 }
 
 @media (max-width: 1400px)
@@ -324,7 +339,7 @@ html, body
 
 .bg-weird-white
 {
-    background-color: #FAF9F6 Im !important;
+    background-color: #FAF9F6 !important;
 }
 
 #undoChangesIcon 
