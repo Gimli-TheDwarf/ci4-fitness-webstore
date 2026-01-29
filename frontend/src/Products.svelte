@@ -70,7 +70,7 @@
 <main id="SvelteProductsContainer" class="bg-secondary rounded bg-gradient row gx-0 row-cols-1 row-cols-md-4 shadow flex-grow-1" style="border-radius: 0px !important;">
     {#each info as item} 
     <div class="col p-2" >
-        <div class="d-flex flex-column rounded overflow-hidden border border-2 shadow bg-secondary" style="height: 400px;">
+        <div class="d-flex flex-column rounded-2 overflow-hidden border shadow bg-success-subtle" style="height: 400px;">
             <div class="overflow-auto d-flex flex-row g-3 p-2 rounded">
                 <img on:click|preventDefault={() => showModal(item)} class="SvelteImage border border-1 rounded cursor-pointer" src="{item?.images[0]?.img ? baseURL + 'images/productsImages/' + item?.images[0].img : baseURL + 'images/defaultImage.png'}"  alt={item.src}/>
                 <div id="{item.name} + '_container'" class="h-100 w-100 d-flex flex-column p-2 overflow-y-auto no-scrollbar">
@@ -80,7 +80,7 @@
                     <p><strong>TAGS:</strong> {item.tags}</p>
                 </div>
             </div>
-            <div id={'cart-control-section-' + item.name} style="border-top: 0.05rem solid #212529;" class="p-2 bg-dark-subtle">
+            <div id={'cart-control-section-' + item.name} class="border-top border-secondary p-2 bg-gradient bg-dark">
                 <div class="mt-auto d-flex flex-column justify-content-center align-items-center">
                     <div class="controls-container w-100 d-flex flex-column align-items-center">
 

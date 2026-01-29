@@ -175,4 +175,15 @@ class HomeController extends BaseController
             'info' => $loadInfo
         ]);
     }
+
+    public function Billing()
+    {
+        $loadInfo = $this->retrieveInfo();
+
+        return view("Billing", 
+        [
+            'username' => session()->get('username'),
+            'info' => $loadInfo
+        ]);
+    }
 }

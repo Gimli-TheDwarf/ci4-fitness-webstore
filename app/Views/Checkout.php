@@ -5,3 +5,7 @@
 
         </div>
     <?= $this->endSection() ?>
+
+    <?= $this->section('scripts') ?>
+            <script defer src="<?= base_url('js/sessionSet.js') ?>"></script>
+    <?= $this->endSection() ?>

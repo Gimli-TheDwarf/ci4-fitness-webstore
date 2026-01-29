@@ -42,7 +42,7 @@ onDestroy(() =>
 function affirmSelection(target)
 {
     let parentDiv = target.closest("#base-info")
-    let inputs = [...parentDiv.querySelectorAll('input')].filter(inp => inp !== target);
+    let inputs = [...parentDiv.querySelectorAll('.input-checkbox')].filter(inp => inp !== target);
     console.log("inputs:" , inputs)
     let isEnabled = target.checked;
 
@@ -52,11 +52,29 @@ function affirmSelection(target)
     });
 }
 
+function handleSubmit(e)
+{
+    e.preventDefault();    
+    let formData = {};
+
+    jQuery('#base-info').find('input, select').each(function() 
+    {
+        let name = this?.name; 
+        let value = this?.value;
+
+        if (!name || !value) return
+
+        formData[name] = value
+    });
+    sessionSet('Delivery', formData)
+    onNext('./delivery');
+}
+
 </script>
 
 <CheckoutLayout>
     <div class="w-100 flex-fill d-flex justify-content-center align-items-start " slot="main">
-        <div id="base-info" class="d-flex flex-column justify-content-start align-items-center w-75 h-50 gap-1">
+        <form on:submit={handleSubmit} id="base-info" class="d-flex flex-column justify-content-start align-items-center w-75 h-50 gap-1">
 
             <div class="flex-column w-100 gap-2 pt-4 text-blacker">
                 <h1 class="w-100 text-start">Delivery</h1>
@@ -64,25 +82,25 @@ function affirmSelection(target)
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-4 border-bottom border-secondary pb-4">
-                <input class="fs-3 m-0 form-check-input" type="checkbox" id="checkbox-option1" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="Omniva Parcel" id="checkbox-option1" on:click={(e) => affirmSelection(e.currentTarget)}>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option1">Delivery to an Omniva parcel locker: 2-3 days.</label>
                 <span class="ms-auto">2.99 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4">
-                <input class="fs-3 m-0 form-check-input" type="checkbox" id="checkbox-option2" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="DPD Parcel" id="checkbox-option2" on:click={(e) => affirmSelection(e.currentTarget)}>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option2">Delivery to a DPD parcel locker: 2-3 days.</label>
                 <span class="ms-auto">2.99 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4">
-                <input class="fs-3 m-0 form-check-input" type="checkbox" id="checkbox-option3" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="SmartPosti Parcel" id="checkbox-option3" on:click={(e) => affirmSelection(e.currentTarget)}>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option3">Delivery to a SmartPosti parcel locker: 2-3 days.</label>
                 <span class="ms-auto">4.00 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4 mb-4">
-                <input class="fs-3 m-0 form-check-input" type="checkbox" id="checkbox-option4" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="DPD Courier Delivery" id="checkbox-option4" on:click={(e) => affirmSelection(e.currentTarget)}>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option4">Home delivery with a DPD courier in 2-3 days.</label>
                 <span class="ms-auto">5.59 €</span>
             </div>
@@ -101,7 +119,7 @@ function affirmSelection(target)
 
                     <div class="w-100 d-flex flex-column justify-content-center align-items-start">
                         <label class="d-flex h-100 text-center align-items-center" for="info-input2">Terminal</label>
-                        <select name="City" class="p-0 m-0 form-select" id="info-input2" data-placeholder="Terminal" required>
+                        <select name="Terminal" class="p-0 m-0 form-select" id="info-input2" data-placeholder="Terminal" required>
                             <option class="form-option" value=""></option>
                             <option class="form-option" value="WIP">WIP</option>
                         </select>
@@ -111,24 +129,24 @@ function affirmSelection(target)
                     <div class="d-flex w-100 justify-content-center align-items-center gap-4"> 
                         <div class="w-50 d-flex flex-column justify-content-center align-items-start">
                             <label for="name-input">Name</label>
-                            <input type="text" class="form-control" id="name-input" required>
+                            <input name="Name" type="text" class="form-control" id="name-input" required>
                         </div>
 
                         <div class="w-50 d-flex flex-column justify-content-center align-items-start">
                             <label for="surname-input">Surname</label>
-                            <input type="text" class="form-control" id="surname-input" required>
+                            <input name="Surname" type="text" class="form-control" id="surname-input" required>
                         </div>
                     </div>
                     
                     <div class="w-100 d-flex flex-column justify-content-center align-items-start">
                         <label for="phone-input">Phone Number</label>
-                        <input type="tel" class="form-control" id="phone-input" required>
+                        <input name="Phone Number" type="tel" class="form-control" id="phone-input" required>
                     </div>
                 </div>
             </div>
 
-            <ManeuverButtons prev={() => onPrev('./cart')} next={() => onNext('./delivery')}>
+            <ManeuverButtons prev={() => onPrev('./cart')} nextType="submit">
             </ManeuverButtons>
-        </div>
+        </form>
     </div>
 </CheckoutLayout>   

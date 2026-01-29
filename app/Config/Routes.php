@@ -20,6 +20,7 @@ $routes->get('loadImages(:segment)', 'HomeController::loadImages/$1');
 
 $routes->get('cart', 'HomeController::Cart');
 $routes->get('delivery', 'HomeController::Delivery');
+$routes->get('billing', 'HomeController::Billing');
 
 $routes->post('AddItem/(:num)/(:num)', 'CartController::addItem/$1/$2');
 $routes->post('RemoveItem/(:segment)', 'CartController::removeItem/$1');

@@ -6,6 +6,7 @@ import SearchBar from './SearchBar.svelte';
 import InfoWindow from './ModalWindow.svelte';
 import Checkout from './Checkout.svelte';
 import Delivery from './Delivery.svelte';
+import Billing from './Billing.svelte';
 
 document.addEventListener('DOMContentLoaded', () => 
 {
@@ -17,6 +18,7 @@ document.addEventListener('DOMContentLoaded', () =>
   const modalWindow = document.getElementById("global-modal-window") || null;
   const checkoutContainer = document.getElementById("checkout-container") || null;
   const deliveryContainer = document.getElementById("delivery-container") || null;
+  const billingContainer = document.getElementById("billing-container") || null;
 
   // DATA START
   const baseURL = document.getElementById("base-url-container").dataset.baseurl || null;
@@ -119,6 +121,15 @@ document.addEventListener('DOMContentLoaded', () =>
     mount(Delivery,
       {
         target: deliveryContainer
+      }
+    )
+  }
+
+  if(billingContainer)
+  {
+    mount(Billing, 
+      {
+        target: billingContainer
       }
     )
   }

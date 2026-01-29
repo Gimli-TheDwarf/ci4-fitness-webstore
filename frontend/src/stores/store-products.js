@@ -3,7 +3,6 @@ export const productsStore = writable([]);
 export const tagsStore = writable([]);
 export const usersStores = writable([]);
 export const baseURLStore = writable('');
-
 // export async function initialiseViaController()
 // {
 //     const retrieveStuff = await fetch('retrieveBasicInfo', 
