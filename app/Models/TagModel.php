@@ -49,7 +49,7 @@ class TagModel extends Model
         $db = \Config\Database::connect();
 
         $sql = "
-        SELECT name FROM tags
+        SELECT * FROM tags
         LEFT JOIN product_tags AS pt ON pt.tag_id = tags.id
         WHERE pt.item_id = ?;
         ";
@@ -57,6 +57,6 @@ class TagModel extends Model
         $result = $db->query($sql, [$item_id])->getResultArray();
         log_message('info', 'regular: ' . json_encode($result));
         log_message('info', 'non-regular: ' . json_encode(array_column($result, 'id')));
-        return array_column($result, 'name');
+        return $result;
     }
 }

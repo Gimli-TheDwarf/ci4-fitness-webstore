@@ -32,7 +32,7 @@
         </div>
 
         <div class="col-sm-6 col-lg-3 d-flex" style="min-height: 15vh">
-            <button on:click|preventDefault={() => ChangeSelection('sales')} class="overflow-hidden w-100 p-0 input-group d-flex flex-column border-0 rounded gradient-pink">
+            <button disabled on:click|preventDefault={() => ChangeSelection('sales')} class="opacity-25 overflow-hidden w-100 p-0 input-group d-flex flex-column border-0 rounded gradient-pink">
                 <div class="w-100 flex-grow-1 d-flex justify-content-between align-items-center">
                     <h5 class="w-75 text-light m-0 p-0">Sales Info Menu</h5>
                     <i class="w-25 border-start border-2 h-100 d-flex justify-content-center align-items-center p-2 text-light fs-2 fa-solid fa-scale-unbalanced-flip"></i>

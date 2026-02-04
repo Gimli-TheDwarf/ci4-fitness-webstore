@@ -10,12 +10,13 @@
     <?= view('partials/toast') ?>
     <?= view('partials/modalWindow') ?>
     
-    <div id="layout-container" class="w-100 flex-grow-1 d-flex flex-column align-items-center">
+    <div id="layout-container" class="w-100 flex-grow-1 d-flex flex-column align-items-center bg-blue-gray bg-gradient">
         <?= $this->renderSection('layout-content') ?>
     </div>
 
     <?= view('partials/footer') ?>
 
+    
     <?= view('partials/loadInfo') ?>
 
     <?= $this->renderSection('scripts') ?>

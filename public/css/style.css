@@ -139,20 +139,30 @@ html, body
 {
   height: 25% !important;
 }
+
+.hover-transform 
+{
+  transition: transform 150ms ease-in-out;
+}
+.hover-transform:hover 
+{
+  transform: scale(1.05);
+}
 /* ::after basically works like a pseudo-element that is inserted as the last child of the element */
 
 .SvelteImage
 {
-    transition: transform 0.2s ease-in-out;
+    transition: transform 350ms ease-in-out;
 }
 .SvelteImage:hover
 {
-    transform: scale(1.025);
+    transform: scale(1.35);
 }
 .cursor-pointer
 {
     cursor: pointer;
 }
+
 
 .no-scrollbar
 {
@@ -160,9 +170,33 @@ html, body
   scrollbar-width: none; /* firefox */
 }
 
+.thin-scrollbar-x
+{
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: thin; 
+    scrollbar-color: #9aa0a6 transparent;
+}
+
+.thin-scrollbar-x::-webkit-scrollbar:horizontal 
+{
+  height: 6px;
+}
+
+.thin-scrollbar-x:-webkit-scrollbar-track:horizontal 
+{
+  background: transparent;
+}
+
+.thin-scrollbar-x::-webkit-scrollbar-thumb:horizontal 
+{
+  background: #9aa0a6;
+  border-radius: 0;
+}
+
 .no-scrollbar::-webkit-scrollbar
 {
-  display: none; /* Chrome, Safari, Opera */
+  display: none; 
 }
 
 .no-focus-outline:focus /* no outline when selecting something */
@@ -181,6 +215,16 @@ html, body
 .no-spin 
 {
   appearance: none;
+}
+
+.p-05 
+{
+  padding: 0.5rem;
+}
+
+.p-05 
+{
+  padding: 0.25rem;
 }
 
 .min-vh-25 
@@ -217,9 +261,26 @@ html, body
     filter: brightness(0.7);
 }
 
+.fs-7 
+{
+  font-size: 0.5rem;
+}
 .bg-blue-gray
 {
     background-color: #2C3E50 !important;
+}
+
+.bg-orange
+{
+    background-color: #F67214 !important;
+}
+.text-orange
+{
+    color: #F67214 !important;
+}
+.border-orange
+{
+    border-color: #F67214 !important;
 }
 
 .text-blue-gray
@@ -236,6 +297,27 @@ html, body
 .btn-blue-gray:hover
 {
     filter: brightness(0.7);
+}
+
+.btn-orange
+{
+  --bs-btn-color:#fff;
+  --bs-btn-bg:#F67214;
+  --bs-btn-border-color:#F67214;
+
+  --bs-btn-hover-color:#fff;
+  --bs-btn-hover-bg:#DD6712;
+  --bs-btn-hover-border-color:#D86412;
+
+  --bs-btn-focus-shadow-rgb:246,114,20;
+
+  --bs-btn-active-color:#fff;
+  --bs-btn-active-bg:#D16111;
+  --bs-btn-active-border-color:#CA5D10;
+
+  --bs-btn-disabled-color:#fff;
+  --bs-btn-disabled-bg:#F67214;
+  --bs-btn-disabled-border-color:#F67214;
 }
 
 #header-admin

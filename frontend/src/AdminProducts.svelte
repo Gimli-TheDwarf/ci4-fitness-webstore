@@ -76,7 +76,9 @@
             success: function(response)
             {
                 notify(response.message);
-                let updatedProducts = response['new-products'];
+                let updatedProducts = response['data'];
+                console.log("UPDATED PRODUCTS: ", updatedProducts)
+                console.log("________________________________________")
                 updateProducts(updatedProducts);
             },
 
@@ -95,7 +97,7 @@
 
 </script>
 
-    <div class="w-100 m-2 p-2 row d-inline-block" id="admin-panel-inner-wrapper">
+    <div class="d-flex flex-column min-vh-100 w-100" id="admin-panel-inner-wrapper">
 
         <div id="administrator-products-filter" class="col-12 ms-2 ">
             <button class="fw-semibold btn bg-none">Filter ^</button>
@@ -103,13 +105,13 @@
 
         {#each displayProducts as product}
         <div id="{product.name + '-Wrapper-Container'}" class="col-sm-12 col-lg-6 p-2 m-0">
-            <div class="w-100 rounded-4 btn btn-light vh-10 bg-light bg-gradient shadow-sm p-2 d-flex flex-row gap-3">
+            <div class="w-100 rounded-4 btn btn-light vh-10 bg-light bg-gradient border shadow-sm p-2 d-flex flex-row gap-3">
 
                     <input type="hidden" id="{product.name + '-id-input'}" value={product.id}>
 
                     
                     <button on:click|preventDefault={() => openProductEditor('edit', product)} class="rounded btn p-0 m-0 d-flex justify-content-center align-items-center w-10 h-100">
-                        <img class="shadow-sm d-flex align-items-center justify-content-center rounded img-fluid h-100" alt="{product.name}" src="{product?.images[0]?.img ? 'images/productsImages/' + product?.images[0]?.img : 'images/defaultImage.png'}">
+                        <img class="shadow-sm d-flex align-items-center justify-content-center rounded img-fluid h-100" alt="{product.name}" src="{product?.images?.[0]?.img ? 'images/productsImages/' + product?.images[0]?.img : 'images/defaultImage.png'}">
                     </button>
                     
 
@@ -131,13 +133,26 @@
         </div>
         {/each}
 
-        <div class="col-12 d-flex justify-content-center gap-3">
-            <div class="input-group input-group-sm w-25 shadow-sm">
-                <button on:click={() => previousPage()} class="w-25 btn btn-primary rounded-0 rounded-start-3">Previous</button>
-                <input type="number" class="form-control no-focus-outline no-spin" min="1" max={maxPage} placeholder="Page Number" bind:value|number={page} on:input={() => clamp(page)}>
-                <button on:click={() => nextPage()} class="w-25 btn btn-primary rounded-0 rounded-end-3">Next</button>
-            </div>
+        <div class="col-12 d-flex justify-content-center mt-auto px-3 pb-3">
+            <div class="w-100 d-flex justify-content-center">
+                <div class="w-100 bg-light bg-gradient border-top shadow-sm rounded-top-3 px-3 px-md-4 py-3 d-flex justify-content-between align-items-center gap-3" style="max-width: 1100px;">
 
-            <button class="w-25 btn btn-success shadow-sm fw-semibold rounded-3" on:click={() => updateSelected()}>Save Changes</button>
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="small text-muted fw-semibold d-none d-md-inline d-flex align-items-center gap-2"><i class="bi bi-layers opacity-75"></i><span>Navigation</span></span>
+
+                        <div class="input-group input-group-sm shadow-sm" style="width: 320px;">
+                            <button on:click={() => previousPage()} class="btn btn-outline-primary rounded-0 rounded-start-3 fw-semibold d-inline-flex align-items-center gap-2"><i class="bi bi-chevron-left"></i><span>Prev</span></button>
+                            <input type="number" class="form-control no-focus-outline no-spin text-center" min="1" max={maxPage} placeholder="Page" bind:value|number={page} on:input={() => clamp(page)}>
+                            <button on:click={() => nextPage()} class="btn btn-outline-primary rounded-0 rounded-end-3 fw-semibold d-inline-flex align-items-center gap-2"><span>Next</span><i class="bi bi-chevron-right"></i></button>
+                        </div>
+
+                        <span class="small text-muted d-none d-lg-inline">of <span class="fw-semibold">{maxPage}</span></span>
+                    </div>
+
+                    <button class="btn btn-success shadow-sm fw-semibold rounded-3 px-3 d-inline-flex align-items-center gap-2" on:click={() => updateSelected()}><i class="bi bi-check2-circle"></i><span>Save Changes</span></button>
+
+                </div>
+            </div>
         </div>
+
     </div>

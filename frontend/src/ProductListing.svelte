@@ -14,6 +14,7 @@
     let imageItemsCount = $state(0);
     let lengthObserver;
     let tagNames;
+    let tags;
     let checkboxLabel = $state(true);
     let undoChangesInfo = $state({ name: '', price: 0, description: '' });
 
@@ -29,8 +30,6 @@
         //subscribe returns a function, calling that function undoes the subscription
     });
 
-    $inspect(product);
-
     $effect(() => 
     {
         if(product)
@@ -45,8 +44,6 @@
             undoChangesInfo.status = product.status;
         };
     });
-
-    $inspect(product);
 
     $effect(() => 
     {
@@ -127,9 +124,12 @@
 
                 success: function(success)
                 {
-                    tagNames = success.data;
+                    tagNames = [];
+                    tags = success.data; //START HERE
+                    tags.forEach(t => tagNames.push(t.name));
                     jQuery(Select2Element).val(tagNames).trigger('change');
                     notify(tagNames);
+                    console.log("TAG NAMES: ", tagNames);
                 },
 
                 error: function(jqXHR)
@@ -367,19 +367,21 @@
             if(item.name === "tags")
             {
                 itemValue = jquery(Select2Element).val();
+                console.log("TAGS: ", tags);
                 console.log("RAAAAGH: ", jquery(Select2Element).val());
             }
             console.log(itemValue);
             inputObject[item.name] = itemValue ?? "";
         });
-
-        console.log(inputObject);
+        let formatedArray = [];
+        formatedArray.push(JSON.parse(JSON.stringify(inputObject)));
+        console.log("FORMATED ARRAY: ", formatedArray);
 
         jquery.ajax({
             url: 'changeProducts',
             method:'PATCH',
             dataType: 'json',
-            data: JSON.stringify(inputObject),
+            data: JSON.stringify(formatedArray),
             contentType: 'application/json',
 
             success: function(response)
@@ -400,112 +402,106 @@
 
 {#key mode}
     {#if mode === 'edit'}
-        <div id="adminForm" class="mt-4 w-75 d-flex h-75 justify-content-center flex-row align-items-center gap-3">
-            <form on:submit|preventDefault={addItem} class="w-75 h-100 d-flex flex-row gap-2 p-2 m-0" id="productsForm" method="post" enctype="multipart/form-data">
+    <div id="adminForm" class="w-100 min-vh-100 d-flex flex-row justify-content-center align-items-stretch gap-3 p-3">
+        <form on:submit|preventDefault={addItem} class="flex-grow-1 d-flex justify-content-center flex-row gap-3 m-0" id="productsForm" method="post" enctype="multipart/form-data">
 
-                <div id="basic-input-container" class="d-flex flex-column justify-content-center align-items-center h-100 w-50 p-2 shadow-sm bg-white bg-gradient rounded-1">
+            <div id="basic-input-container" class="d-flex flex-column justify-content-start align-items-center h-100 w-50 p-3 shadow-sm bg-white bg-gradient rounded-2 border">
+                <input name="id" class="product-form-input d-none" value={product.id}>
 
-                    <input name="id" class="product-form-input d-none" value={product.id}>
-
-                    <div class="w-100 border-0 rounded-0 border-bottom mb-3 mt-2">
-                        <span class="fs-5 fw-semibold w-100 text-left p-2 text-blue-gray">Product Details</span>
-                    </div>
-                    
-                    <div class="mb-3 w-100 fs-6 fw-semibold text-blue-gray">
-                        <i class="fa-solid fa-signature mx-1 fs-5"></i><label for="name" class="form-label">Product Name</label>
-                        <input type="text" id="productNameInput" name="name" class="product-form-input form-control" placeholder="Name…" required value={product.name}>
-                    </div>
-                    
-                    <div class="mb-3 w-100 fs-6 fw-semibold text-blue-gray">
-                        <i class="fa-solid fa-tags mx-1 fs-5"></i><label for="tagsSelection" class=" form-label">Tags</label>
-                        <select class="product-form-input border border-opacity-25" name="tags" id="tagsSelection" multiple bind:this={Select2Element} >
-                            {#each $tagsStore as tag}
-                                <option value={tag.id}>{tag.name}</option>
-                            {/each}
-                        </select>
-                    </div>
-
-                    <div class="w-100 fs-6 fw-semibold text-blue-gray">
-                        <i class="fa-solid fa-money-bill mx-1 fs-5 "></i><label for="productPriceInput" class="text-start form-label">Price</label>
-                    </div>
-
-                    <div id="productPriceDecreas" class="mb-3 d-flex flex-row w-100 input-group">
-                        <span class="fw-semibold input-group-text text-blue-gray">€</span>
-                        <input name="price" id="productPriceInput" class="product-form-input form-control text-start no-focus-outline no-spin" bind:value={cost} min="0.01" step="0.01" type="number">
-                        <button class="btn btn-outline-success" type="button" on:click|preventDefault={() => cost += 0.01}><i id="priceActionIcon" class="fa-solid fa-plus"></i></button>
-                    </div>
-                    
-                    <div class="w-100 fs-6 fw-semibold text-blue-gray">
-                        <i class="fa-solid fa-piggy-bank mx-1 fs-5"></i><label for="discount" class="text-start form-label">Discount Percentage</label>    
-                    </div>
-
-                    <div class="mb-3 d-flex flex-row w-100 input-group"> 
-                        <span class="fw-bold input-group-text text-blue-gray">%</span>
-                        <input bind:value={discount} id="productDiscountInput" name="discount_percentage" type="number" min="0" max="99.9" step="0.01" class="product-form-input form-control text-start no-focus-outline no-spin">
-                    </div>  
-
-                    <div class="mb-3 w-100 fs-6 fw-semibold text-dark form-control p-0">
-                        <div class="w-100 d-flex justify-content-start align-items-center text-blue-gray p-2">
-                            <i class="fa-solid fa-book me-2 fs-5"></i>
-                            <label for="productDescriptionInput" class="form-label m-0">Description</label>
-                        </div>
-
-                        <div class="rounded-0 p-2 border-0 border-top border-dashed">
-                            <textarea id="productDescriptionInput" name="description" class="product-form-input form-control border-0 no-focus-outline p-0 w-100" placeholder="Description…" rows="3" value={product.description}></textarea>
-                        </div>
-                    </div>
-
-                    <div class="w-100 fs-6 text-blue-gray fw-semibold">
-                        <i class="fa-solid fa-clipboard-check fs-5 mx-1"></i>
-                        <label class="text-start form-label">Product Status</label>
-                    </div>
-
-                    <div class="w-100 fs-6 fw-semibold text-blue-gray form-check form-switch">
-                        <input id="status" checked={status == "1" || 1 ? true : false} on:change={(e) => syncCheckbox(e.currentTarget)} type="checkbox" name="status" class="rounded-1 form-check-input product-form-input">
-                        <span>Status:</span>
-                        <span class={checkboxLabel === true ? 'text-success' : 'text-danger'}>{checkboxLabel === true ? 'Enabled' : 'Disabled'}</span>
-                    </div>
-
+                <div class="w-100 border-0 rounded-0 border-bottom mb-3 pb-2 d-flex justify-content-between align-items-center">
+                    <span class="fs-5 fw-semibold text-blue-gray d-inline-flex align-items-center gap-2"><i class="fa-solid fa-box-open opacity-75"></i><span>Product Details</span></span>
+                    <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis border">Editing</span>
                 </div>
 
-                <div class="d-flex flex-column justify-content-center align-items-center h-100 w-25 gap-3">
-                    <button data-bs-toggle="modal" data-bs-target="#EditorModalWindow" class="h-75 p-0 m-0 no-focus-outline btn">
-                        <div class="shadow-sm h-100 w-100 rounded-1 overflow-hidden">
-                            <div class="fs-5 text-light d-flex justify-content-center align-items-center flex-row custom-blue h-25 w-100">
-                                <i class="fa-solid fa-image me-1"></i>
-                                <span>Product Images</span>
-                            </div>
+                <div class="mb-3 w-100 fs-6 fw-semibold text-blue-gray">
+                    <i class="fa-solid fa-signature mx-1 fs-5"></i><label for="productNameInput" class="form-label">Product Name</label>
+                    <input type="text" id="productNameInput" name="name" class="product-form-input form-control" placeholder="Name…" required minlength="2" maxlength="80" value={product.name}>
+                </div>
 
-                            <div class="p-2 h-75 w-100 bg-white">
-                                <div class="w-100 h-100 rounded-1 border border-dashed border-success border-opacity-25 overflow-hidden d-flex justify-content-center align-items-center">
-                                    <img class="w-100 " src={product?.images?.[0]?.img ? 'images/productsImages/' + product?.images[0]?.img : 'images/defaultImage.png'}>
-                                </div>
-                            </div>
-                        </div>
-                    </button>
+                <div class="mb-3 w-100 fs-6 fw-semibold text-blue-gray">
+                    <i class="fa-solid fa-tags mx-1 fs-5"></i><label for="tagsSelection" class="form-label">Tags</label>
+                    <select class="product-form-input border border-opacity-25 rounded-1 w-100" name="tags" id="tagsSelection" multiple bind:this={Select2Element}>
+                        {#each $tagsStore as tag}
+                            <option value={tag.id}>{tag.name}</option>
+                        {/each}
+                    </select>
+                </div>
 
-                    <button class="text-secondary fs-5 h-25 w-100 p-2 btn btn-light border-dark border-dashed fw-light highlight-input" on:click|preventDefault={() => updateSelection()}>
-                        Save Changes
-                    </button>
+                <div class="w-100 fs-6 fw-semibold text-blue-gray">
+                    <i class="fa-solid fa-money-bill mx-1 fs-5"></i><label for="productPriceInput" class="text-start form-label">Price</label>
+                </div>
 
-                    <div id="undo-changes-container" class="input-group w-100">
-                        <span class="input-group-text p-2">
-                            <i id="undoChangesIcon" class="fa-solid fa-rotate-left"></i>
-                        </span>
+                <div id="productPriceDecreas" class="mb-3 d-flex flex-row w-100 input-group shadow-sm">
+                    <span class="fw-semibold input-group-text text-blue-gray">€</span>
+                    <input name="price" id="productPriceInput" class="product-form-input form-control text-start no-focus-outline no-spin" bind:value={cost} min="0.01" step="0.01" type="number" required>
+                    <button class="btn btn-outline-success" type="button" on:click|preventDefault={() => cost = Number((cost + 0.01).toFixed(2))} title="Increase price"><i id="priceActionIcon" class="fa-solid fa-plus"></i></button>
+                </div>
 
-                        <button id="undoChangesButton" on:click|preventDefault={() => undoChanges()} class="btn btn-outline-secondary border-dashed flex-fill ">
-                            Undo Changes
-                        </button>
+                <div class="w-100 fs-6 fw-semibold text-blue-gray">
+                    <i class="fa-solid fa-piggy-bank mx-1 fs-5"></i><label for="productDiscountInput" class="text-start form-label">Discount Percentage</label>
+                </div>
+
+                <div class="mb-3 d-flex flex-row w-100 input-group shadow-sm">
+                    <span class="fw-bold input-group-text text-blue-gray">%</span>
+                    <input bind:value={discount} id="productDiscountInput" name="discount_percentage" type="number" min="0" max="99.9" step="0.01" class="product-form-input form-control text-start no-focus-outline no-spin">
+                </div>
+
+                <div class="mb-3 w-100 text-dark p-0 rounded-2 border shadow-sm overflow-hidden flex-grow-1 d-flex flex-column">
+                    <div class="w-100 d-flex justify-content-start align-items-center text-blue-gray p-2 bg-light bg-gradient border-bottom flex-shrink-0">
+                        <i class="fa-solid fa-book me-2 fs-5"></i><label for="productDescriptionInput" class="form-label m-0 fw-semibold">Description</label>
+                    </div>
+
+                    <div class="p-2 flex-grow-1">
+                        <textarea id="productDescriptionInput" name="description" class="product-form-input form-control border-0 no-focus-outline p-0 w-100 h-100" placeholder="Description…" bind:value={product.description}></textarea>
                     </div>
                 </div>
-            </form>
-            
-            <div class="d-flex w-25 h-50 flex-column justify-content-between align-items-center">
-                <button class="w-100 h-25 shadow-sm gradient-custom-red border-0 rounded-1 text-light fs-2">Back</button>
-                <button class="w-100 h-25 shadow-sm gradient-custom-blue border-0 rounded-1 text-light">Elsewhere</button>
-                <button class="w-100 h-25 shadow-sm gradient-custom-purple border-0 rounded-1 text-light">Placeholder</button>
+
+                <div class="w-100 fs-6 text-blue-gray fw-semibold">
+                    <i class="fa-solid fa-clipboard-check fs-5 mx-1"></i><label class="text-start form-label">Product Status</label>
+                </div>
+
+                <div class="w-100 fs-6 fw-semibold text-blue-gray form-check form-switch d-flex align-items-center gap-2">
+                    <input id="status" checked={status == "1" || status == 1} on:change={(e) => syncCheckbox(e.currentTarget)} type="checkbox" name="status" class="rounded-1 form-check-input product-form-input">
+                    <span>Status:</span>
+                    <span class={checkboxLabel === true ? 'text-success' : 'text-danger'}>{checkboxLabel === true ? 'Enabled' : 'Disabled'}</span>
+                </div>
+
             </div>
-        </div>
+
+            <div class="d-flex flex-column justify-content-start align-items-center h-100 w-25 gap-3">
+
+                <button type="button" data-bs-toggle="modal" data-bs-target="#EditorModalWindow" class="flex-grow-1 p-0 m-0 no-focus-outline btn w-100">
+                    <div class="shadow-sm h-100 w-100 rounded-2 overflow-hidden border bg-white">
+                        <div class="fs-6 text-light d-flex justify-content-center align-items-center flex-row custom-blue h-25 w-100 fw-semibold gap-2">
+                            <i class="fa-solid fa-image"></i><span>Product Images</span>
+                        </div>
+
+                        <div class="p-2 h-75 w-100 bg-white">
+                            <div class="w-100 h-100 rounded-2 border border-dashed border-success border-opacity-25 overflow-hidden d-flex justify-content-center align-items-center bg-light">
+                                <img class="w-100 h-100 object-fit-cover" alt="Product preview" src={product?.images?.[0]?.img ? 'images/productsImages/' + product?.images?.[0]?.img : 'images/defaultImage.png'}>
+                            </div>
+                        </div>
+                    </div>
+                </button>
+
+                <button type="button" class="w-100 btn btn-success shadow-sm fw-semibold rounded-2 d-inline-flex justify-content-center align-items-center gap-2" on:click|preventDefault={() => updateSelection()}>
+                    <i class="fa-solid fa-floppy-disk"></i><span>Save Changes</span>
+                </button>
+
+                <div id="undo-changes-container" class="input-group w-100 shadow-sm">
+                    <span class="input-group-text p-2 bg-light"><i id="undoChangesIcon" class="fa-solid fa-rotate-left"></i></span>
+                    <button type="button" id="undoChangesButton" on:click|preventDefault={() => undoChanges()} class="btn btn-outline-secondary border-dashed flex-fill fw-semibold">Undo Changes</button>
+                </div>
+
+                <a href="adminPanel" class="w-100 text-decoration-none mt-auto">
+                    <button type="button" class="w-100 shadow-sm gradient-custom-red border-0 rounded-2 text-light fw-semibold d-inline-flex justify-content-center align-items-center gap-2">
+                        <i class="fa-solid fa-arrow-left"></i><span>Return</span>
+                    </button>
+                </a>
+
+            </div>
+        </form>
+    </div>
     {:else}
     {/if}
 {/key}
@@ -553,6 +549,7 @@
                 </button>
             </div>
             {/if}
+
         </div>
       </div>
       <div class="modal-footer">

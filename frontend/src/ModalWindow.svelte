@@ -34,7 +34,8 @@ onMount(() =>
 
         let modalButton1 = modal.querySelector(".modal-button-1");
         let modalButton2 = modal.querySelector(".modal-button-2");
-
+        jquery(modalButton1).off();
+        
         switch (modalMode)
         {
             case 'delete-tag':
@@ -51,6 +52,7 @@ onMount(() =>
                 }); 
                 break;
             case 'tag-change-name':
+                console.log("CHANGE TAG NAME CASE");
                 modalTitle.innerHTML = "Tag Name Change";
                 modalBody.innerHTML = modalInfo;
                 modalImage.src = "images/windowImages/changeNameIcon.png";
@@ -66,8 +68,10 @@ onMount(() =>
                 
                 break;
             case 'add-tag':
+                console.log("ADD TAG CASE");
                 modalTitle.innerHTML = "New Tag Addition";
                 modalBody.innerHTML = modalInfo;
+                modalButton1.innerHTML = "Insert Tag"
                 modalImage.src = "images/windowImages/insertItemIcon.png";
                 modalInput.classList.remove('d-none');
                 modalInput.classList.add('d-flex');
@@ -80,7 +84,7 @@ onMount(() =>
                         notify("Insert a valid tag name");
                         return;
                     }
-                    console.log(modalInput.value);
+                    console.log("Input value:", modalInput.value);
                     uploadTag(modalInput.value);
                 });
             break;
@@ -97,7 +101,8 @@ function uploadTag(name)
 {
     modalInput.value = "";
     modalBootstrap.hide();
-    jquery.ajax({
+    jquery.ajax(
+        {
         url: "addNewTag",
         method: 'POST',
         contentType: "application/json",

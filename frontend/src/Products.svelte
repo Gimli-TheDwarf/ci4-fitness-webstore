@@ -1,128 +1,121 @@
 <script>
     export let info = [];
     export let baseURL;
+    import {addToFavorites, decrease, increase, addToCart} from './favorites.js';
 
     console.log("INFO: " , info);
 
-    function showModal(item)
+    function showModal(item, eventT)
     {
         const BootstrapModal = document.getElementById("ImageModal");
 
+        let eventTargetSrc = eventT.currentTarget.src;
+
         BootstrapModal.querySelector(".modal-title").textContent = item.name;
-        BootstrapModal.querySelector(".modalImage").src = baseURL +  'images/' + (item?.images[0]?.img ? 'productsImages/' + item?.images[0]?.img : 'defaultImage.png');
+        BootstrapModal.querySelector(".modalImage").src = eventTargetSrc;
         BootstrapModal.querySelector(".modaliMAGE").alt = item.name;
         BootstrapModal.querySelector("#modalText").textContent = item.description;
 
         const newModal = new bootstrap.Modal(BootstrapModal);
         newModal.show();
     }   
-
-    function addToCart(item)
+    
+    function changeImage(image, name) 
     {
-        let letter = '';
-        let quantity = parseInt(document.getElementById('quantity-input-' + item.name).value);
-        console.log("QUANTITY: ", quantity);
-
-        if(quantity === 1)
-        {
-            letter = ' was';
-        }
-        else
-        {
-            letter = ' were';
-        }
-
-        if(quantity != 0)
-        {
-            jQuery.ajax({
-                url: baseURL + 'AddItem/' + item.id + '/' + quantity,
-                method: 'POST',
-                dataType: 'json',
-                
-                success: function(response)
-                {
-                    document.getElementById("cartItemsCountIcon").innerHTML = response.cartCount;
-                    notify(quantity + 'x ' + item.name + letter + ' added to your Cart.');
-                },
-
-                error: function(jqXHR) 
-                {
-                    console.log(jqXHR.responseJSON.message);
-                }
-            });
-        }
+        const mainImg = document.getElementById(`${name}-main-image`);
+        mainImg.src = `images/productsImages/${image}`;
     }
 
-    function increase(inputId)
+    function manageFavorites(params)
     {
-        let inputItem = document.getElementById(inputId);
-        inputItem.stepUp();
-    }
-
-    function decrease(inputId)
-    {
-        let inputItem = document.getElementById(inputId);
-        inputItem.stepDown();
+        info = info;
+        addToFavorites(params)
     }
 
 </script>
 
-<main id="SvelteProductsContainer" class="bg-secondary rounded bg-gradient row gx-0 row-cols-1 row-cols-md-4 shadow flex-grow-1" style="border-radius: 0px !important;">
-    {#each info as item} 
-    <div class="col p-2" >
-        <div class="d-flex flex-column rounded-2 overflow-hidden border shadow bg-success-subtle" style="height: 400px;">
-            <div class="overflow-auto d-flex flex-row g-3 p-2 rounded">
-                <img on:click|preventDefault={() => showModal(item)} class="SvelteImage border border-1 rounded cursor-pointer" src="{item?.images[0]?.img ? baseURL + 'images/productsImages/' + item?.images[0].img : baseURL + 'images/defaultImage.png'}"  alt={item.src}/>
-                <div id="{item.name} + '_container'" class="h-100 w-100 d-flex flex-column p-2 overflow-y-auto no-scrollbar">
-                    <p><strong>{item.name}</strong></p>
-                    <p><strong>Description:</strong> {item.description}</p>
-                    <p><strong>PRICE: </strong> {item.price}</p>
-                    <p><strong>TAGS:</strong> {item.tags}</p>
-                </div>
-            </div>
-            <div id={'cart-control-section-' + item.name} class="border-top border-secondary p-2 bg-gradient bg-dark">
-                <div class="mt-auto d-flex flex-column justify-content-center align-items-center">
-                    <div class="controls-container w-100 d-flex flex-column align-items-center">
+<main id="SvelteProductsContainer"class="bg-secondary-subtle bg-gradient border rounded-0 shadow-sm overflow-hidden row g-0 row-cols-1 row-cols-md-5 flex-grow-1 p-2 p-md-3">
+    {#if !info || info.length === 0}
+        <div class="d-flex justify-content-center align-items-center w-100" style="min-height: 20vh;">
+            <p class="m-0 w-100 opacity-75 text-center fw-light fs-4">No Items That Match Selected Tags</p>
+        </div>
+    {:else}
+        {#each info as item} 
+            <div class="col p-3">
+                <div class="d-flex shadow-sm flex-column justify-content-between align-items-center rounded-4 overflow-hidden border bg-light bg-gradient p-3" style="height: 600px;">
 
-                        <div class="d-flex flex-row w-100 input-group">
-                            <button disabled={item.status !== "1"} on:click|preventDefault={() => decrease('quantity-input-' + item.name)} class="btn btn-danger border border-end-0 border-dark w-25"><i class="fa-solid fa-minus"></i></button>
-                            <input disabled={item.status !== "1"} id={'quantity-input-' + item.name} class="ps-2 w-50 no-focus-outline no-spin border border-dark" type="number" min="0" step="1" placeholder={item.status === "1" ? " Enter the Quantity." : " Item out of Stock."}>
-                            <button disabled={item.status !== "1"} on:click|preventDefault={() => increase('quantity-input-' + item.name)} class="btn btn-success border border-start-0 border-dark w-25"><i class="fa-solid fa-plus"></i></button>
+                    <div class="w-100 h-50 overflow-hidden bg-blue-gray overflow-auto d-flex justify-content-center rounded-4 p-05 position-relative">
+                        <img on:click|preventDefault={(e) => showModal(item, e)} id={item.name + "-main-image"} class="SvelteImage rounded-1 cursor-pointer overflow-hidden" src="{item?.images[0]?.img ? baseURL + 'images/productsImages/' + item?.images[0].img : baseURL + 'images/defaultImage.png'}" alt={item.src}>
+                        {#if item.discount_percentage > 0}
+                            <span class="badge d-inline-flex align-items-center gap-1 position-absolute top-0 start-0 z-1 m-2 px-2 py-1 rounded-pill bg-orange bg-gradient shadow-sm fw-semibold text-uppercase">{item.discount_percentage}% <span class="small opacity-75">OFF</span></span>
+                        {/if}
+                    </div>
+
+                    <div id="{item.name} + '_container'" class="w-100 h-50 d-flex flex-column justify-content-start align-items-start bg-light py-2">
+
+                        <div class="h-25 w-100 d-flex flex-nowrap align-items-center thin-scrollbar-x overflow-y-hidden p-05 gap-1">
+                            {#each item.images as imageItem}
+                                <button on:click|preventDefault={() => changeImage(imageItem.img, item.name)}  class="hover-transform flex-shrink-0 d-flex justify-content-center border border-1 border-orange rounded-2 w-25 h-100">
+                                    <img class="rounded-1 h-100" src="{imageItem?.img ? baseURL + 'images/productsImages/' + imageItem.img : baseURL + 'images/defaultImage.png'}" cursor="pointer" alt={imageItem.img}>
+                                </button>
+                            {/each}
                         </div>
-                        <div id={'additional-info-' + item.name} class="w-100 d-flex justify-content-between">
-                            <span class="text-shadow" class:text-success={item.status === "1"} class:text-danger={item.status !== "1"}>{item.status === "1" ? "In Stock" : "Out of Stock"}</span>
-                        </div>
+
+                        <p class="fs-6 fw-semibold m-0 my-1">{item.name}</p>
+                        <p class="opacity-75 fs-7 overflow-y-auto no-scrollbar">
+                        {item.description}
+                        {#if item.tags.array?.length}
+                            {#each item.tags as tag}
+                                <span class="fw-semibold text-center text-orange fs-7 p-05 border rounded-4 mx-1">{tag}</span>
+                            {/each}
+                        {:else}
+                        {/if}
+                        </p>
+
+
+                        <div class="d-flex flex-row justify-content-between align-items-center w-100 h-25 gap-2">
+                            <button on:click|preventDefault={() => addToCart(item)} class="rounded-1 text-light fw-semibold btn-secondary fs-7 btn">ADD TO CART</button>
+                            <div class="input-group input-group-sm flex-nowrap shadow-sm rounded-2 overflow-hidden qty-group h-100">
+                                <button type="button" disabled={item.status !== "1"} on:click|preventDefault={() => decrease('quantity-input-' + item.name)} class="btn btn-outline-secondary px-2" aria-label="Decrease quantity"><i class="bi bi-dash-lg"></i></button>
+                                <input disabled={item.status !== "1"} id={'quantity-input-' + item.name} class="form-control no-spin text-center border-0" type="number" min="0" step="1" placeholder={item.status === "1" ? "Qty" : "Out of stock"}>
+                                <button type="button" disabled={item.status !== "1"} on:click|preventDefault={() => increase('quantity-input-' + item.name)} class="btn btn-outline-secondary px-2" aria-label="Increase quantity"><i class="bi bi-plus-lg"></i></button>
+                            </div>
+                            <button data-itemid={item.id} class="fs-3 rounded-1 text-orange btn h-100 border" class:btn-orange={item.favorite} class:text-light={item.favorite} class:text-orange={!item.favorite} class:btn-light={!item.favorite} on:click|preventDefault={() => manageFavorites(item)}><i class="bi bi-bookmark-heart"></i></button>
+                        </div>  
 
                     </div>
-                    <button on:click|preventDefault={() => addToCart(item)} class="w-100 btn btn-success border border-1 border-dark bg-gradient text-shadow"><strong>Add To Cart</strong></button>
+                    
                 </div>
-            </div>       
+            </div>
+        {/each}
+    {/if}
+
+
+    <div id="ImageModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content bg-light bg-gradient border-0 rounded-4 overflow-hidden shadow-lg">
+
+                <div class="modal-header border-0 px-4 py-3">
+                    <div class="d-flex flex-column">
+                    <h5 class="modal-title fw-semibold mb-0">Preview</h5>
+                    <small class="opacity-75">Click outside to close</small>
+                    </div>
+                    <button type="button" class="btn-close shadow-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body p-3">
+                    <div class="bg-blue-gray rounded-4 d-flex justify-content-center align-items-center p-2">
+                    <img src="" alt="preview" class="modalImage rounded-3 shadow-sm">
+                    </div>
+                </div>
+
+                <div class="modal-footer border-0 px-4 pb-4 pt-0">
+                    <div class="w-100 bg-light bg-gradient border rounded-4 p-3 shadow-sm">
+                    <p class="m-0 fw-semibold text-dark" id="modalText"></p>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
-    {/each}
-<div id="ImageModal" class="modal fade" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Default</h5>
-                <button type="button" class=" btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body d-flex justify-content-center">
-                <img src="" alt="default" class="modalImage border border-1 rounded">
-            </div>
-            <div class="bg-success bg-gradient modal-footer d-flex justify-content-center">
-                <p class="text-white fw-normal" id="modalText">
-                </p>
-            </div>
-        </div>
-    </div>
-</div>
 </main>
-
-
-<style>
-    p
-    {
-        font-size: 14px;
-    }
-</style>

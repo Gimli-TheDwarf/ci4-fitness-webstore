@@ -20,7 +20,8 @@ class ProductsImagesModel extends Model
         SELECT *
         FROM product_images
         WHERE product_images.item_id = ? 
-        AND IF(?, product_images.slot = 1, TRUE);
+        AND IF(?, product_images.slot = 1, TRUE)
+        ORDER BY slot asc;
         ";
 
         $images = $db->query($sql, [$id, (int)$retrieveFirst])->getResultArray();

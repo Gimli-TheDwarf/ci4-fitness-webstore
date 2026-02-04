@@ -59,7 +59,7 @@ class CreateProducts extends Migration
         ]);
 
         $this->forge->addKey('id', true);
-        $this->forge->createTable('products', true, $attributes);
+        $this->forge->createTable('products', true);
     }
 
     public function down()

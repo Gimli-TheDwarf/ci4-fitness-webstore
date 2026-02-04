@@ -23,11 +23,9 @@
 
 <div class="bg-dark w-100 bg-gradient d-flex flex-column min-vh-25">
     <div id="tags-list" class="flex-shrink-0">
-
     </div>
 
-    <div id="product-list" class="flex-grow-1">
-
+    <div id="product-list" class="d-flex">
     </div>
 </div>
 <?= $this->endSection() ?>

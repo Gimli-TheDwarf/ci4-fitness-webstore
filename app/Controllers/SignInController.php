@@ -140,6 +140,7 @@ class SignInController extends BaseController
                 'username' => $user['username'],
                 'role' => $user['role'],
                 'cart_items_count' => $cartCount,
+                'email' => $user['email'],
                 'isLoggedIn' => true,
             ]);
     

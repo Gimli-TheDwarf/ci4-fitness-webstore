@@ -1,4 +1,4 @@
-<script>
+<!-- <script>
     export let users = [];
     export let products = [];
     export let tags = [];
@@ -21,6 +21,7 @@
 
     onMount(() => 
     {
+        console.log("IM LOSING MY DUMBASS MIND");
         jQuery(Select2Element).select2({
             width: '100%',
             placeholder: 'Select Tags'
@@ -241,4 +242,8 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->
+
+
+
+THIS WHOLE THING IS RETIRED, AN OLD VERSION OF A FORM

@@ -24,9 +24,11 @@ class AdminController extends BaseController
         {
             $displayImage = $productsImagesModel->retrieveImages($product['id'], false);
             $images = $displayImage ?? null;
-            $products[$i]['images'] = $images;
+            $products[$i]['images'] = $images ?? [];
         };
-
+        
+        log_message('info', 'products in admin view return: ' . json_encode($products));
+        log_message('info', '______________________________________________________');
         $info =
         [
             'users' => $users,
@@ -49,56 +51,51 @@ class AdminController extends BaseController
     {
         $productsModel = new \App\Models\ProductModel();
         $productTagsModel = new \App\Models\ProductsTagsModel();
+        $productsImagesModel = new \App\Models\ProductsImagesModel();
 
-        $file = $this->request->getFile('productImage');
-
-        $validationRules = 
+        $postData = $this->request->getPost();
+        $images = $this->request->getFileMultiple('images'); //accessing the array images[]
+        $status = isset($postData['status']) ? 1 : 0;
+        
+        $id = $productsModel->insert(
         [
-            'productImage' => 
+            'name' => $postData['name'],
+            'description' => $postData['description'],
+            'price' => $postData['price'],
+            'status' => $status,
+            'discount_percentage' => $postData['discount_percentage']
+        ]);
+
+        foreach((array) $images as $i => $imageFile)
+        {
+            $field = "images.$i"; //accessing individual items within the array : images.0, images.1, images.2 etc
+            if (!$this->validate($this->validateImage($field))) //validating each of the images
+            {
+                $errors = array_values($this->validator->getErrors()); //array values returns the values, dropping the original keys | The validator object is the validation service instance that runs the rules and stores results
+                // we validate only rules for $field (e.g. images.0, images.1, images.2)
+                // if it fails, $this->validator->getErrors() returns errors from that most recent validate call (or the current field)
+                return $this->returnFunction(true, $errors);
+            }
+            // $filename = $imageFile->getTempName();
+            // $imageSize = @getimagesize($filename);
+            // log_message('info' , 'image size: ' . json_encode($imageSize));
+            $imageName = $imageFile->getName();
+            $productsImagesModel->insert(
             [
-                'rules' => 'uploaded[productImage]' . '|is_image[productImage]'. '|min_dims[productImage, 400,600]' . '|max_dims[productImage,400,600]',
-                'errors' => [ 'uploaded' => 'You have to upload an image.', 'is_image'  => 'The file must be a valid image.', 'min_dims' => 'Minimum image scale is 400x600.', 'max_dims' => 'Maxium image scale is 400x600.']
-            ]
-        ];
-
-        if(! $this->validate($validationRules))
-        {
-            return $this->response->setStatusCode(422)->setJSON([
-                'error'    => true,
-                'messages' => $this->validator->getErrors(),
+                'item_id' => $id,
+                'img' => $imageName,
+                'slot' => $i+1
             ]);
+            $imageFile->move(FCPATH.'images/productsImages', $imageName);
         }
 
-        $file = $this->request->getFile('productImage');
-        $file->move(FCPATH.'images/productsImages', $file->getName());
-
-        $productsModel->insert([
-            'name'        => $this->request->getPost('productName'),
-            'description' => $this->request->getPost('productDescription'),
-            'price'       => $this->request->getPost('cost'),
-            'img' => $file->getName()
-        ]);
-
-        $newId = $productsModel->getInsertID();
-
-        $tags = $this->request->getPost('productTags') ?? [];
-
-        foreach($tags as $tag)
-        {
-            $productTagsModel->insert([
-                'item_id' => $newId,
-                'tag_id' => $tag,
-            ]);
-        }
-
-        return $this->response->setStatusCode(200)->setJSON([
-            'error' => false,
-            'message'=> $this->request->getPost('productName') . ' was successfully added to the list of available products.'
-        ]);
+        return $this->returnFunction(false, "Successfully uploaded product to the database");
     }
 
     public function alterTagName()
     {
+                
+        log_message('info', '____________TAG NAME CHANGE_____________');
         $tagsModel = new \App\Models\TagModel();
         $info = $this->request->getJSON(true);
 
@@ -154,10 +151,13 @@ class AdminController extends BaseController
 
     public function insertTag()
     {
+        log_message('info', '____________TAG INSERT____________');
         $tagsModel = new \App\Models\TagModel();
         $info = $this->request->getJSON(true);
 
         $nameSection = $info['tag_name'] ?? null;
+
+        log_message('info', 'NAME OF TAG: '. json_encode($info));
 
         if ($nameSection)
         {
@@ -183,45 +183,64 @@ class AdminController extends BaseController
         $productsModel = new \App\Models\ProductModel();
         $tagsModel = new \App\Models\TagModel();
         $productTagsModel = new \App\Models\ProductsTagsModel();
+        $productsImagesModel = new \App\Models\ProductsImagesModel();
 
         $infoArray = $this->request->getJSON(true);
         $tagsValue = [];
 
-        $id = $infoArray["id"] ?? null;
-        if(!$id)
-        {
-            return $this->returnFunction(true, "No Id provided, contact a developer.");
-        }
+        log_message('info', 'stuff test yadayadayada: ' . json_encode($infoArray));
 
-        foreach($infoArray as $key => $value)
+        foreach($infoArray as $array)
         {
-            if ($key == "tags")
+
+            log_message('info' ,'ARRAY:' . json_encode($array));
+            $id = $array["id"] ?? null;
+            if($id === null || trim($id) === '')
             {
-                $productTagsModel->where('item_id', $id)->delete();
-                foreach($value as $val)
+                return $this->returnFunction(true, "No Id provided, contact a developer.");
+            }
+            
+            foreach($array as $key => $value)
+            {
+                if ($key == "tags")
                 {
-                    $productTagsModel->insert([
-                        'item_id' => $id,
-                        'tag_id' => $val
-                    ]);
+                    $productTagsModel->where('item_id', $id)->delete();
+                    foreach($value as $val)
+                    {
+                        log_message('info', 'tag value: ' . json_encode($val));
+                        $productTagsModel->insert([
+                            'item_id' => $id,
+                            'tag_id' => $val
+                        ]);
+                    }
+                }
+
+                else if ($key === "id")
+                {
+                    continue;
+                }
+
+                else
+                {
+                    log_message('info' ,'ID:' . json_encode($id));
+                    log_message('info' ,'VALUE:' . json_encode($value));
+                    log_message('info' ,'KEY:' . json_encode($key));
+                    $productsModel->update($id, [ $key => $value ]);
                 }
             }
-
-            else if ($key == "id")
-            {
-                continue;
-            }
-
-            else
-            {
-                log_message('info' ,'test:' . json_encode($id));
-                log_message('info' ,'test:' . json_encode($value));
-                log_message('info' ,'test:' . json_encode($key));
-                $productsModel->update($id, [ $key => $value ]);
-            }
         }
 
-        return $this->returnFunction(false, "Successfully updated field values");
+        $products = $productsModel->findAll();
+        
+        foreach($products as $i => $product)
+        {
+            $displayImage = $productsImagesModel->retrieveImages($product['id'], false);
+            $images = $displayImage ?? null;
+            $products[$i]['images'] = $images ?? [];
+        };
+
+        log_message('info', 'info return: ' . json_encode($products));
+        return $this->returnFunction(false, "Successfully updated field values", ["data" => $products]);
     }
 
     public function findItemTags()
@@ -398,6 +417,12 @@ class AdminController extends BaseController
 
     private function validateImage(string $file): array
     {
+        //this function takes the name of the field (key) of the items we sent and finds it in the request/$_FILES section.
+        //image1: {name: jadadada...} 
+
+        // field = "image1" 
+        // $_files: 
+        // image1: {info...}
         return //returns true/false
         [
             $file => 
@@ -406,7 +431,7 @@ class AdminController extends BaseController
 
                 'rules' => 
                 [
-                    "min_dims[$file, 400, 600]",
+                    "min_dims[$file, 200, 300]",
                     "max_dims[$file, 400, 600]",
                     "mime_in[$file,image/jpg,image/jpeg,image/png,image/webp]",
                     "is_image[$file]",

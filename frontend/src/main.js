@@ -7,10 +7,11 @@ import InfoWindow from './ModalWindow.svelte';
 import Checkout from './Checkout.svelte';
 import Delivery from './Delivery.svelte';
 import Billing from './Billing.svelte';
+import Favorites from './FavoritesList.svelte';
+import AccountInfo from './AccountInfo.svelte';
 
 document.addEventListener('DOMContentLoaded', () => 
 {
-  
   const tagsContainer = document.getElementById('tags-list') || null;
   const productsContainer = document.getElementById('product-list') || null;
   const CartContainer = document.getElementById("cart-container") || null;
@@ -19,13 +20,18 @@ document.addEventListener('DOMContentLoaded', () =>
   const checkoutContainer = document.getElementById("checkout-container") || null;
   const deliveryContainer = document.getElementById("delivery-container") || null;
   const billingContainer = document.getElementById("billing-container") || null;
+  const favoritesContainer = document.getElementById("favorites-container") || null;
+  const accountInfoContainer = document.getElementById("account-info-container") || null;
 
   // DATA START
+  const accountInfoRaw = document.getElementById("account-info-items")?.textContent;
   const baseURL = document.getElementById("base-url-container").dataset.baseurl || null;
   const rawLoadData = document.getElementById('boot-data')?.textContent;
   const parsedData = rawLoadData ? JSON.parse(rawLoadData) : null;
   const productsData = parsedData ? parsedData.products : null;
   const tagsData = parsedData ? parsedData.tags : null;
+  const accountInfo = accountInfoRaw ? JSON.parse(accountInfoRaw) : null;
+  console.log("ACCOUNT INFO: ", accountInfo);
   // DATA END
 
   let ProductMount; 
@@ -132,6 +138,32 @@ document.addEventListener('DOMContentLoaded', () =>
         target: billingContainer
       }
     )
+  }
+
+  if (favoritesContainer)
+  {
+    mount(Favorites, 
+      {
+        target: favoritesContainer,
+        props: 
+        {
+          products: productsData,
+        }
+      }
+    )
+  }
+
+  if (accountInfoContainer)
+  {
+    mount(AccountInfo, 
+      {
+        target: accountInfoContainer,
+        props: 
+        {
+          accountInformation: accountInfo?.user_info ?? null ,
+        }
+      }
+    );
   }
   
 });

@@ -30,11 +30,12 @@ export const baseURLStore = writable('');
 
 export function initialiseAdminStore(users, products, tags, baseURL)
 {
-    console.log(get(productsStore));
     usersStores.set(Array.isArray(users) ?  users : []);
     productsStore.set(Array.isArray(products) ?  products : []);
     tagsStore.set(Array.isArray(tags) ? tags : []);
     baseURLStore.set(baseURL);
+    console.log("products store: ", get(productsStore));
+    console.log("tags store: ", get(tagsStore));
 }
 
 export function initialiseProducts(list, listName)
