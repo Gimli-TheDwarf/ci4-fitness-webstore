@@ -1,0 +1,8 @@
+{
+    "name": "fitness/googlelogin",
+    "description": "reinstalling composer for the 5th time cuz i messed it up (i blame the government)",
+    "require": {
+        "google/apiclient": "^2.18",
+        "codeigniter4/framework": "^4.6"
+    }
+}
