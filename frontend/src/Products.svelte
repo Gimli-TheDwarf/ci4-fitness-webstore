@@ -40,12 +40,12 @@
             <p class="m-0 w-100 opacity-75 text-center fw-light fs-4">No Items That Match Selected Tags</p>
         </div>
     {:else}
-{#each info as item} 
+        {#each info as item} 
             <div class="col p-3">
                 <div class="d-flex shadow-sm flex-column justify-content-between align-items-center rounded-4 overflow-hidden border bg-light bg-gradient p-3" style="height: 600px;">
 
                     <div class="w-100 h-50 overflow-hidden bg-blue-gray overflow-auto d-flex justify-content-center rounded-4 p-05 position-relative">
-                        <img on:click|preventDefault={(e) => showModal(item, e)} id={item.name + "-main-image"} class="SvelteImage rounded-1 cursor-pointer overflow-hidden" style={item.status !== "1" ? "opacity: 0.45; filter: grayscale(100%);" : ""} src="{item?.images[0]?.img ? baseURL + 'images/productsImages/' + item?.images[0].img : baseURL + 'images/defaultImage.png'}" alt={item.src}>
+                        <img on:click|preventDefault={(e) => showModal(item, e)} id={item.name + "-main-image"} class="SvelteImage rounded-1 cursor-pointer overflow-hidden" style={item.status !== "1" ? "opacity: 0.45; filter: grayscale(100%);" : ""} src="{item?.images[0]?.img ? baseURL + 'images/productsImages/' + item?.images[0].img : '/images/defaultImage.png'}" alt={item.src}>
                         {#if item.discount_percentage > 0}
                             <span class="badge d-inline-flex align-items-center gap-1 position-absolute top-0 start-0 z-1 m-2 px-2 py-1 rounded-pill bg-orange bg-gradient shadow-sm fw-semibold text-uppercase">{item.discount_percentage}% <span class="small opacity-75">OFF</span></span>
                         {/if}
@@ -63,7 +63,7 @@
                         <div class="h-25 w-100 d-flex flex-nowrap align-items-center thin-scrollbar-x overflow-y-hidden p-05 gap-1">
                             {#each item.images as imageItem}
                                 <button on:click|preventDefault={() => changeImage(imageItem.img, item.name)} class="hover-transform flex-shrink-0 d-flex justify-content-center border border-1 border-orange rounded-2 w-25 h-100">
-                                    <img class="rounded-1 h-100" src="{imageItem?.img ? baseURL + 'images/productsImages/' + imageItem.img : baseURL + 'images/defaultImage.png'}" cursor="pointer" alt={imageItem.img}>
+                                    <img class="rounded-1 h-100" src="{imageItem?.img ? baseURL + 'images/productsImages/' + imageItem.img : '/images/defaultImage.png'}" cursor="pointer" alt={imageItem.img}>
                                 </button>
                             {/each}
                         </div>
