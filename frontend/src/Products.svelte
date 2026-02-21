@@ -64,7 +64,8 @@
                         <p class="fs-6 fw-semibold m-0 my-1">{item.name}</p>
                         <p class="opacity-75 fs-7 overflow-y-auto no-scrollbar">
                         {item.description}
-                        {#if item.tags.array?.length}
+                        {#if item.tags}
+                        aaaa
                             {#each item.tags as tag}
                                 <span class="fw-semibold text-center text-orange fs-7 p-05 border rounded-4 mx-1">{tag}</span>
                             {/each}

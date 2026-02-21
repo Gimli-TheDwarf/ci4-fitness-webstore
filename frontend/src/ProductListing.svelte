@@ -122,14 +122,12 @@
                 dataType: 'json',
                 contentType: 'json',
 
-                success: function(success)
+                success: function (success) 
                 {
-                    tagNames = [];
-                    tags = success.data; //START HERE
-                    tags.forEach(t => tagNames.push(t.name));
-                    jQuery(Select2Element).val(tagNames).trigger('change');
-                    notify(tagNames);
-                    console.log("TAG NAMES: ", tagNames);
+                    const el = jQuery(Select2Element);
+                    const tagNames = (success.data || []).map(t => t.name);
+                    const tagValues = tagNames.map(name => el.find("option").filter(function () { return jQuery(this).text().trim() === name; }).val()).filter(Boolean);
+                    el.val(tagValues).trigger("change.select2");
                 },
 
                 error: function(jqXHR)
