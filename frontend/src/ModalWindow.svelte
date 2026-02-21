@@ -1,6 +1,6 @@
 <script>
 import jquery from "jquery";
-import { updateTags } from "./stores/store-products";
+import { updateTags, removeProduct as removeProductFromStore } from "./stores/store-products";
 import { onMount } from "svelte";
 
 let modal;
@@ -38,6 +38,18 @@ onMount(() =>
         
         switch (modalMode)
         {
+            case 'delete-product':
+                modalTitle.innerHTML = "Product Removal";
+                modalBody.innerHTML = modalInfo;
+                modalImage.src = "images/windowImages/deleteItemIcon.png";
+
+                modalButton1.textContent = "Remove Product";
+                jquery(modalButton1).off();
+                jquery(modalButton1).on("click", () =>
+                {
+                    deleteProduct(modalData);
+                });
+                break;
             case 'delete-tag':
 
                 modalTitle.innerHTML = "Tag Removal";
@@ -96,6 +108,32 @@ onMount(() =>
 });
 
 let responseMessage;
+
+
+function deleteProduct(productId)
+{
+    modalBootstrap.hide();
+
+    jquery.ajax({
+        url: "removeProduct",
+        method: "DELETE",
+        dataType: "json",
+        contentType: "application/json",
+        data: JSON.stringify({ product_id: productId }),
+
+        success: function (response)
+        {
+            notify(response.message);
+            removeProductFromStore(productId);
+        },
+        error: function(jqXHR)
+        {
+            responseMessage = jqXHR.responseJSON?.message ?? "Failed to delete product.";
+            notify(responseMessage);
+        }
+    });
+}
+
 
 function uploadTag(name)
 {

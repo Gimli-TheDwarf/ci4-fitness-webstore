@@ -94,65 +94,74 @@
     {
         locationSelection('specificProduct', modeSelect, productSelect.id);
     }
-
 </script>
 
-    <div class="d-flex flex-column min-vh-100 w-100" id="admin-panel-inner-wrapper">
+<div class="d-flex flex-column min-vh-100 w-100 bg-body" id="admin-panel-inner-wrapper">
 
-        <div id="administrator-products-filter" class="col-12 ms-2 ">
-            <button class="fw-semibold btn bg-none">Filter ^</button>
-        </div>
+  <div class="row g-3 px-2 px-md-3 py-3 m-0">
 
-        {#each displayProducts as product}
-        <div id="{product.name + '-Wrapper-Container'}" class="col-sm-12 col-lg-6 p-2 m-0">
-            <div class="w-100 rounded-4 btn btn-light vh-10 bg-light bg-gradient border shadow-sm p-2 d-flex flex-row gap-3">
+    {#each displayProducts as product}
+      <div id="{product.name + '-Wrapper-Container'}" class="col-sm-12 col-lg-6 p-2 m-0">
+        <div class="w-100 rounded-4 btn btn-light vh-10 bg-white bg-gradient border shadow-sm p-3 d-flex flex-row gap-3 align-items-center text-start" style="transition: transform .12s ease, box-shadow .12s ease;">
+          
+          <input type="hidden" id="{product.name + '-id-input'}" value={product.id}>
 
-                    <input type="hidden" id="{product.name + '-id-input'}" value={product.id}>
+          <button on:click|preventDefault={() => openProductEditor('edit', product)} class="rounded-4 btn p-0 m-0 d-flex justify-content-center align-items-center w-10 h-100 shadow-sm overflow-hidden border" title="Edit product">
+            <img class="shadow-sm d-flex align-items-center justify-content-center rounded img-fluid h-100 w-100 object-fit-cover" alt="{product.name}" src="{product?.images?.[0]?.img ? 'images/productsImages/' + product?.images[0]?.img : 'images/defaultImage.png'}">
+          </button>
 
-                    
-                    <button on:click|preventDefault={() => openProductEditor('edit', product)} class="rounded btn p-0 m-0 d-flex justify-content-center align-items-center w-10 h-100">
-                        <img class="shadow-sm d-flex align-items-center justify-content-center rounded img-fluid h-100" alt="{product.name}" src="{product?.images?.[0]?.img ? 'images/productsImages/' + product?.images[0]?.img : 'images/defaultImage.png'}">
-                    </button>
-                    
+          <div id="{product.name + '-name-container'}" class="d-flex flex-column justify-content-end align-items-start h-100 flex-grow-1" style="min-width: 180px;">
+            <label class="form-check-label fw-semibold small text-muted mb-1" for="{product.name + '-name-input'}">Name</label>
+            <input type="text" id="{product.name + '-name-input'}" placeholder="Name" class="rounded-3 h-50 form-control shadow-sm" value="{product.name}">
+          </div>
 
-                    <div id="{product.name + '-name-container'}" class="d-flex flex-column justify-content-end align-items-start h-100 ">
-                        <label class="form-check-label fw-semibold" for="{product.name + '-name-input'}">Name</label>
-                        <input type="text" id="{product.name + '-name-input'}" placeholder="Name" class="rounded-3 h-50 form-control" value="{product.name}">
-                    </div>
-                    
-                    <div id="{product.name + '-discount-container'}" class="d-flex flex-column justify-content-end align-items-start h-100">
-                        <label class="form-check-label fw-semibold" for="{product.name + '-discount-input'}">Discount Percentage</label>
-                        <input type="text" id="{product.name + '-discount-input'}" class="rounded-3 h-50 form-control" min="0" max="99" step="1" value={product.discount_percentage} placeholder="Discount" required>
-                    </div>
-
-                    <div class="form-check form-switch d-flex flex-column justify-content-end align-items-start h-100 p-0" style="width: 15%">
-                        <label class="form-check-label fw-semibold text-start" for="{product.name + '-status-input'}">Status<br><span class:text-danger={product.status === '0'} class:text-success={product.status === '1'} class="fs-7 fw-semibold">{product.status === '1' ? "In Stock" : "Out of Stock" }</span></label>
-                        <input checked="{product.status === '1'}" id="{product.name + '-status-input'}" class="h-50 w-100 m-0 rounded-3 form-check-input" type="checkbox" role="switch"  style=" margin-left: 0 !important;">
-                    </div>
+          <div id="{product.name + '-discount-container'}" class="d-flex flex-column justify-content-end align-items-start h-100" style="min-width: 170px;">
+            <label class="form-check-label fw-semibold small text-muted mb-1" for="{product.name + '-discount-input'}">Discount Percentage</label>
+            <div class="input-group shadow-sm h-50">
+              <input type="text" id="{product.name + '-discount-input'}" class="rounded-start-3 form-control" min="0" max="99" step="1" value={product.discount_percentage} placeholder="Discount" required>
+              <span class="input-group-text rounded-end-3 fw-semibold">%</span>
             </div>
+          </div>
+
+          <div class="form-check form-switch d-flex flex-column justify-content-end align-items-start h-100 p-0" style="width: 15%; min-width: 140px;">
+            <label class="form-check-label fw-semibold text-start" for="{product.name + '-status-input'}">Status<br><span class:text-danger={product.status === '0'} class:text-success={product.status === '1'} class="fs-7 fw-semibold">{product.status === '1' ? "In Stock" : "Out of Stock" }</span></label>
+            <input checked="{product.status === '1'}" id="{product.name + '-status-input'}" class="h-50 w-100 m-0 rounded-3 form-check-input shadow-sm" type="checkbox" role="switch" style="margin-left: 0 !important;">
+          </div>
+
+          <div class="d-flex flex-column justify-content-between align-items-end h-100 ms-auto" style="width: 52px;">
+            <button on:click|preventDefault={() => openProductEditor('edit', product)} class="btn btn-outline-primary shadow-sm rounded-3 w-100 d-inline-flex align-items-center justify-content-center" title="Edit"><i class="bi bi-pencil"></i></button>
+
+            <button class="btn btn-outline-danger shadow-sm rounded-3 w-100 d-inline-flex align-items-center justify-content-center" title="Delete" data-bs-target="#global-modal-window" data-bs-toggle="modal" data-mode="delete-product" data-data={product.id} data-info={`Remove "${product.name}" product from the database?`}><i class="bi bi-trash3"></i></button>
+          </div>
+
         </div>
-        {/each}
+      </div>
+    {/each}
 
-        <div class="col-12 d-flex justify-content-center mt-auto px-3 pb-3">
-            <div class="w-100 d-flex justify-content-center">
-                <div class="w-100 bg-light bg-gradient border-top shadow-sm rounded-top-3 px-3 px-md-4 py-3 d-flex justify-content-between align-items-center gap-3" style="max-width: 1100px;">
+  </div>
 
-                    <div class="d-flex align-items-center gap-3">
-                        <span class="small text-muted fw-semibold d-none d-md-inline d-flex align-items-center gap-2"><i class="bi bi-layers opacity-75"></i><span>Navigation</span></span>
+  <div class="col-12 d-flex justify-content-center mt-auto px-3 pb-3">
+    <div class="w-100 d-flex justify-content-center">
+      <div class="w-100 bg-white bg-gradient border-top shadow-sm rounded-top-4 px-3 px-md-4 py-3 d-flex justify-content-between align-items-center gap-3" style="max-width: 1100px;">
 
-                        <div class="input-group input-group-sm shadow-sm" style="width: 320px;">
-                            <button on:click={() => previousPage()} class="btn btn-outline-primary rounded-0 rounded-start-3 fw-semibold d-inline-flex align-items-center gap-2"><i class="bi bi-chevron-left"></i><span>Prev</span></button>
-                            <input type="number" class="form-control no-focus-outline no-spin text-center" min="1" max={maxPage} placeholder="Page" bind:value|number={page} on:input={() => clamp(page)}>
-                            <button on:click={() => nextPage()} class="btn btn-outline-primary rounded-0 rounded-end-3 fw-semibold d-inline-flex align-items-center gap-2"><span>Next</span><i class="bi bi-chevron-right"></i></button>
-                        </div>
+        <div class="d-flex align-items-center gap-3">
+          <span class="small text-muted fw-semibold d-none d-md-inline d-flex align-items-center gap-2"><i class="bi bi-layers opacity-75"></i><span>Navigation</span></span>
 
-                        <span class="small text-muted d-none d-lg-inline">of <span class="fw-semibold">{maxPage}</span></span>
-                    </div>
+          <div class="input-group input-group-sm shadow-sm" style="width: 320px;">
+            <button on:click={() => previousPage()} class="btn btn-outline-primary rounded-0 rounded-start-3 fw-semibold d-inline-flex align-items-center gap-2"><i class="bi bi-chevron-left"></i><span>Prev</span></button>
 
-                    <button class="btn btn-success shadow-sm fw-semibold rounded-3 px-3 d-inline-flex align-items-center gap-2" on:click={() => updateSelected()}><i class="bi bi-check2-circle"></i><span>Save Changes</span></button>
+            <input type="number" class="form-control no-focus-outline no-spin text-center" min="1" max={maxPage} placeholder="Page" bind:value|number={page} on:input={() => clamp(page)}>
 
-                </div>
-            </div>
+            <button on:click={() => nextPage()} class="btn btn-outline-primary rounded-0 rounded-end-3 fw-semibold d-inline-flex align-items-center gap-2"><span>Next</span><i class="bi bi-chevron-right"></i></button>
+          </div>
+
+          <span class="small text-muted d-none d-lg-inline">of <span class="fw-semibold">{maxPage}</span></span>
         </div>
 
+        <button class="btn btn-success shadow-sm fw-semibold rounded-3 px-3 d-inline-flex align-items-center gap-2" on:click={() => updateSelected()}><i class="bi bi-check2-circle"></i><span>Save Changes</span></button>
+
+      </div>
     </div>
+  </div>
+
+</div>

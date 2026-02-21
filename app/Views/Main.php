@@ -99,7 +99,6 @@
                     <img src="${baseUrl}${image}" class="d-block w-100 h-auto" alt="Slide ${i + 1}">
                     <div class="carousel-caption d-block" style="top: 90%;">
                         <h5 class="text-shadow">Lave</h5>
-                        <p class="text-shadow">NO DESCRIPTION, LOSER</p>
                     </div>
                 `;
 

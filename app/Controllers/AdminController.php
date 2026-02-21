@@ -48,49 +48,94 @@ class AdminController extends BaseController
     }
 
     public function addProduct()
-    {
-        $productsModel = new \App\Models\ProductModel();
-        $productTagsModel = new \App\Models\ProductsTagsModel();
-        $productsImagesModel = new \App\Models\ProductsImagesModel();
-
-        $postData = $this->request->getPost();
-        $images = $this->request->getFileMultiple('images'); //accessing the array images[]
-        $status = isset($postData['status']) ? 1 : 0;
-        
-        $id = $productsModel->insert(
-        [
-            'name' => $postData['name'],
-            'description' => $postData['description'],
-            'price' => $postData['price'],
-            'status' => $status,
-            'discount_percentage' => $postData['discount_percentage']
-        ]);
-
-        foreach((array) $images as $i => $imageFile)
         {
-            $field = "images.$i"; //accessing individual items within the array : images.0, images.1, images.2 etc
-            if (!$this->validate($this->validateImage($field))) //validating each of the images
-            {
-                $errors = array_values($this->validator->getErrors()); //array values returns the values, dropping the original keys | The validator object is the validation service instance that runs the rules and stores results
-                // we validate only rules for $field (e.g. images.0, images.1, images.2)
-                // if it fails, $this->validator->getErrors() returns errors from that most recent validate call (or the current field)
-                return $this->returnFunction(true, $errors);
-            }
-            // $filename = $imageFile->getTempName();
-            // $imageSize = @getimagesize($filename);
-            // log_message('info' , 'image size: ' . json_encode($imageSize));
-            $imageName = $imageFile->getName();
-            $productsImagesModel->insert(
-            [
-                'item_id' => $id,
-                'img' => $imageName,
-                'slot' => $i+1
-            ]);
-            $imageFile->move(FCPATH.'images/productsImages', $imageName);
-        }
+            $productsModel = new \App\Models\ProductModel();
+            $productTagsModel = new \App\Models\ProductsTagsModel(); 
+            $productsImagesModel = new \App\Models\ProductsImagesModel();
+            $db = \Config\Database::connect();
 
-        return $this->returnFunction(false, "Successfully uploaded product to the database");
-    }
+            $postData = $this->request->getPost();
+            $images   = $this->request->getFileMultiple('images'); 
+
+            if (empty($images))
+            {
+                return $this->returnFunction(true, ["At least one image is required."]);
+            }
+
+            foreach ((array) $images as $i => $imageFile)
+            {
+                $field = "images.$i";
+
+                if (!$this->validate($this->validateImage($field)))
+                {
+                    $errors = array_values($this->validator->getErrors());
+                    return $this->returnFunction(true, $errors);
+                }
+            }
+            $movedFiles = [];
+
+            try
+            {
+                $db->transBegin();
+
+                $status = isset($postData['status']) ? 1 : 0;
+
+                $id = $productsModel->insert(
+                [
+                    'name' => $postData['name'],
+                    'description' => $postData['description'],
+                    'price' => $postData['price'],
+                    'status' => $status,
+                    'discount_percentage' => $postData['discount_percentage']
+                ], true);
+
+                if (!$id)
+                {
+                    $db->transRollback();
+                    return $this->returnFunction(true, ["Failed to insert product."]);
+                }
+                foreach ((array) $images as $i => $imageFile)
+                {
+                    $imageName = $imageFile->getName();
+
+                    $productsImagesModel->insert(
+                    [
+                        'item_id' => $id,
+                        'img'     => $imageName,
+                        'slot'    => $i + 1
+                    ]);
+
+                    $targetDir = FCPATH . 'images/productsImages';
+                    if (!$imageFile->move($targetDir, $imageName))
+                    {
+                        $db->transRollback();
+                        foreach ($movedFiles as $path)
+                        {
+                            if (is_file($path)) { @unlink($path); }
+                        }
+                        return $this->returnFunction(true, ["Failed to move image: {$imageName}"]);
+                    }
+
+                    $movedFiles[] = $targetDir . DIRECTORY_SEPARATOR . $imageName;
+                }
+                $db->transCommit();
+                return $this->returnFunction(false, "Successfully uploaded product to the database", ['id' => $id]);
+            }
+            catch (\Throwable $e)
+            {
+                if ($db->transStatus() !== false)
+                {
+                    $db->transRollback();
+                }
+
+                foreach ($movedFiles as $path)
+                {
+                    if (is_file($path)) { @unlink($path); }
+                }
+
+                return $this->returnFunction(true, ["Server error: " . $e->getMessage()]);
+            }
+        }
 
     public function alterTagName()
     {
@@ -406,6 +451,59 @@ class AdminController extends BaseController
         $returnInfo = ['updatedImages' => $newUploads];
 
         return $this->returnFunction(false, $returnMessage, $returnInfo);
+    }
+    public function deleteProduct()
+    {
+        if (!session()->get('isLoggedIn') || session()->get('role') !== 'administrator')
+        {
+            return $this->response->setStatusCode(403)->setJSON([
+                'error' => true,
+                'message' => 'Unauthorized.'
+            ]);
+        }
+
+        $productsModel       = new \App\Models\ProductModel();
+        $productsTagsModel   = new \App\Models\ProductsTagsModel();
+        $productsImagesModel = new \App\Models\ProductsImagesModel();
+        $usersProductsModel  = new \App\Models\UsersProductsModel();
+        $userFavoriteModel   = new \App\Models\UserFavoriteModel();
+
+        $info = $this->request->getJSON(true);
+
+        $id = $info['product_id'] ?? ($info['id'] ?? null);
+
+        if (!$id || !is_numeric($id))
+        {
+            return $this->returnFunction(true, 'No valid product ID provided.');
+        }
+
+        $id = (int)$id;
+
+        $existing = $productsModel->find($id);
+        if (!$existing)
+        {
+            return $this->returnFunction(true, 'Product not found.');
+        }
+
+        $usersProductsModel->where('product_id', $id)->delete();
+        $userFavoriteModel->where('product_id', $id)->delete();
+
+        $productsTagsModel->where('item_id', $id)->delete();
+
+        $images = $productsImagesModel->where('item_id', $id)->findAll();
+        foreach ($images as $imgRow)
+        {
+            $fileName = FCPATH . '/images/productsImages/' . ($imgRow['img'] ?? '');
+            if (is_file($fileName))
+            {
+                unlink($fileName);
+            }
+        }
+        $productsImagesModel->where('item_id', $id)->delete();
+
+        $productsModel->delete($id);
+
+        return $this->returnFunction(false, 'Product was successfully deleted.');
     }
 
     private function returnFunction(bool $status, array|string $message, array $additionalFields = [])

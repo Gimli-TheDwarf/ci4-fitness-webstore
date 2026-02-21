@@ -52,3 +52,4 @@ $routes->get('GetItemTags', 'AdminController::findItemTags');
 $routes->get('retrieveProductImages', 'AdminController::findItemImages');
 $routes->delete('deleteProductImage', 'AdminController::removeItemImage');
 $routes->post('updateImage', 'AdminController::updateItemImages');
+$routes->delete('removeProduct', 'AdminController::deleteProduct');
