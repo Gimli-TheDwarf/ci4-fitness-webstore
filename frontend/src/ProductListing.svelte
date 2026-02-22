@@ -403,7 +403,7 @@
     <div id="adminForm" class="w-100 min-vh-100 d-flex flex-row justify-content-center align-items-stretch gap-3 p-3">
         <form on:submit|preventDefault={addItem} class="flex-grow-1 d-flex justify-content-center flex-row gap-3 m-0" id="productsForm" method="post" enctype="multipart/form-data">
 
-            <div id="basic-input-container" class="d-flex flex-column justify-content-start align-items-center h-100 w-50 p-3 shadow-sm bg-white bg-gradient rounded-2 border">
+            <div id="basic-input-container" class="d-flex flex-column justify-content-start align-items-center h-100 w-50 p-3 shadow-sm bg-white bg-gradient rounded-4 border border-success-subtle">
                 <input name="id" class="product-form-input d-none" value={product.id}>
 
                 <div class="w-100 border-0 rounded-0 border-bottom mb-3 pb-2 d-flex justify-content-between align-items-center">
@@ -418,7 +418,7 @@
 
                 <div class="mb-3 w-100 fs-6 fw-semibold text-blue-gray">
                     <i class="fa-solid fa-tags mx-1 fs-5"></i><label for="tagsSelection" class="form-label">Tags</label>
-                    <select class="product-form-input border border-opacity-25 rounded-1 w-100" name="tags" id="tagsSelection" multiple bind:this={Select2Element}>
+                    <select class="product-form-input border border-opacity-25 rounded-2 w-100" name="tags" id="tagsSelection" multiple bind:this={Select2Element}>
                         {#each $tagsStore as tag}
                             <option value={tag.id}>{tag.name}</option>
                         {/each}
@@ -444,7 +444,7 @@
                     <input bind:value={discount} id="productDiscountInput" name="discount_percentage" type="number" min="0" max="99.9" step="0.01" class="product-form-input form-control text-start no-focus-outline no-spin">
                 </div>
 
-                <div class="mb-3 w-100 text-dark p-0 rounded-2 border shadow-sm overflow-hidden flex-grow-1 d-flex flex-column">
+                <div class="mb-3 w-100 text-dark p-0 rounded-4 border border-success-subtle shadow-sm overflow-hidden flex-grow-1 d-flex flex-column">
                     <div class="w-100 d-flex justify-content-start align-items-center text-blue-gray p-2 bg-light bg-gradient border-bottom flex-shrink-0">
                         <i class="fa-solid fa-book me-2 fs-5"></i><label for="productDescriptionInput" class="form-label m-0 fw-semibold">Description</label>
                     </div>
@@ -463,41 +463,69 @@
                     <span>Status:</span>
                     <span class={checkboxLabel === true ? 'text-success' : 'text-danger'}>{checkboxLabel === true ? 'Enabled' : 'Disabled'}</span>
                 </div>
-
             </div>
 
-            <div class="d-flex flex-column justify-content-start align-items-center h-100 w-25 gap-3">
+            <!-- RIGHT SIDE (more polished + action-focused) -->
+            <div id="right-panel" class="d-flex flex-column justify-content-start align-items-stretch h-100 flex-shrink-0 gap-3" style="width: min(380px, 32vw); max-width: 100%;">
+                <div class="position-sticky" style="top: 1rem;">
 
-                <button type="button" data-bs-toggle="modal" data-bs-target="#EditorModalWindow" class="flex-grow-1 p-0 m-0 no-focus-outline btn w-100">
-                    <div class="shadow-sm h-100 w-100 rounded-2 overflow-hidden border bg-white">
-                        <div class="fs-6 text-light d-flex justify-content-center align-items-center flex-row custom-blue h-25 w-100 fw-semibold gap-2">
-                            <i class="fa-solid fa-image"></i><span>Product Images</span>
+                    <div class="shadow-sm rounded-4 overflow-hidden border border-success-subtle bg-white mb-3">
+                        <div class="px-3 py-2 d-flex justify-content-between align-items-center bg-success bg-gradient text-white">
+                            <span class="fw-semibold d-inline-flex align-items-center gap-2"><i class="fa-solid fa-image opacity-75"></i><span>Images</span></span>
+                            <span class="badge rounded-pill text-bg-light border">Edit</span>
                         </div>
 
-                        <div class="p-2 h-75 w-100 bg-white">
-                            <div class="w-100 h-100 rounded-2 border border-dashed border-success border-opacity-25 overflow-hidden d-flex justify-content-center align-items-center bg-light">
-                                <img class="w-100 h-100 object-fit-cover" alt="Product preview" src={product?.images?.[0]?.img ? 'images/productsImages/' + product?.images?.[0]?.img : 'images/defaultImage.png'}>
+                        <div class="p-3">
+                            <button type="button" data-bs-toggle="modal" data-bs-target="#EditorModalWindow" class="btn p-0 w-100 no-focus-outline">
+                                <div class="w-100 rounded-4 overflow-hidden border bg-white">
+                                    <div class="px-3 py-2 d-flex justify-content-between align-items-center bg-light bg-gradient border-bottom">
+                                        <span class="fw-semibold text-blue-gray d-inline-flex align-items-center gap-2"><i class="fa-solid fa-up-right-and-down-left-from-center opacity-75"></i><span>Preview</span></span>
+                                        <span class="small text-secondary">Click to manage</span>
+                                    </div>
+
+                                    <div class="p-2">
+                                        <div class="w-100 rounded-4 border border-dashed border-success border-opacity-25 overflow-hidden d-flex justify-content-center align-items-center bg-light" style="aspect-ratio: 16 / 10;">
+                                            <img class="w-100 h-100 object-fit-cover" alt="Product preview" src={product?.images?.[0]?.img ? 'images/productsImages/' + product?.images?.[0]?.img : 'images/defaultImage.png'}>
+                                        </div>
+                                    </div>
+                                </div>
+                            </button>
+
+                            <div class="mt-2 small text-secondary d-flex justify-content-between align-items-center">
+                                <span class="d-inline-flex align-items-center gap-2"><i class="fa-regular fa-circle-check text-success opacity-75"></i><span>Use high-quality images</span></span>
+                                <span class="text-secondary-emphasis">Primary preview shown</span>
                             </div>
                         </div>
                     </div>
-                </button>
 
-                <button type="button" class="w-100 btn btn-success shadow-sm fw-semibold rounded-2 d-inline-flex justify-content-center align-items-center gap-2" on:click|preventDefault={() => updateSelection()}>
-                    <i class="fa-solid fa-floppy-disk"></i><span>Save Changes</span>
-                </button>
+                    <div class="shadow-sm rounded-4 overflow-hidden border border-success-subtle bg-white">
+                        <div class="px-3 py-2 d-flex justify-content-start align-items-center bg-light bg-gradient border-bottom text-blue-gray">
+                            <i class="fa-solid fa-screwdriver-wrench me-2 opacity-75"></i><span class="fw-semibold">Actions</span>
+                        </div>
 
-                <div id="undo-changes-container" class="input-group w-100 shadow-sm">
-                    <span class="input-group-text p-2 bg-light"><i id="undoChangesIcon" class="fa-solid fa-rotate-left"></i></span>
-                    <button type="button" id="undoChangesButton" on:click|preventDefault={() => undoChanges()} class="btn btn-outline-secondary border-dashed flex-fill fw-semibold">Undo Changes</button>
+                        <div class="p-3 d-flex flex-column gap-2">
+                            <button type="button" class="w-100 btn btn-success shadow-sm fw-semibold rounded-3 d-inline-flex justify-content-center align-items-center gap-2" on:click|preventDefault={() => updateSelection()}>
+                                <i class="fa-solid fa-floppy-disk"></i><span>Save Changes</span>
+                            </button>
+
+                            <div id="undo-changes-container" class="input-group w-100 shadow-sm">
+                                <span class="input-group-text p-2 bg-light"><i id="undoChangesIcon" class="fa-solid fa-rotate-left"></i></span>
+                                <button type="button" id="undoChangesButton" on:click|preventDefault={() => undoChanges()} class="btn btn-outline-secondary border-dashed flex-fill fw-semibold">Undo Changes</button>
+                            </div>
+
+                            <a href="adminPanel" class="w-100 btn gradient-custom-red border-0 rounded-3 text-light fw-semibold d-inline-flex justify-content-center align-items-center gap-2 shadow-sm mt-1">
+                                <i class="fa-solid fa-arrow-left"></i><span>Return</span>
+                            </a>
+
+                            <div class="small text-secondary mt-1 d-flex justify-content-center align-items-center gap-2">
+                                <i class="fa-solid fa-shield-halved text-success opacity-75"></i><span>Changes apply only after saving</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-
-                <a href="adminPanel" class="w-100 text-decoration-none mt-auto">
-                    <button type="button" class="w-100 shadow-sm gradient-custom-red border-0 rounded-2 text-light fw-semibold d-inline-flex justify-content-center align-items-center gap-2">
-                        <i class="fa-solid fa-arrow-left"></i><span>Return</span>
-                    </button>
-                </a>
-
             </div>
+
         </form>
     </div>
     {:else}
