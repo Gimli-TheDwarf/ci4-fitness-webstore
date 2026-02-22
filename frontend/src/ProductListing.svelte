@@ -507,54 +507,83 @@
 {/key}
 
 
-<div id="EditorModalWindow" class="modal" role="button" on:click|self={() => restoreModal()}>
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title">Editor</h5>
+<div id="EditorModalWindow" class="modal fade" tabindex="-1" aria-hidden="true" role="button" on:click|self={() => restoreModal()}>
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+
+      <div class="modal-header bg-light bg-gradient border-bottom">
+        <h5 class="modal-title fw-semibold d-inline-flex align-items-center gap-2 m-0 text-blue-gray"><i class="fa-solid fa-pen-to-square opacity-75"></i><span>Image Editor</span></h5>
         <button on:click|preventDefault={() => restoreModal()} type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
-      <div class="modal-body">
-        <div id="modal-body-inner" bind:this={modalContainer} class="row align-items-stretch">
+
+      <div class="modal-body p-3">
+        <div id="modal-body-inner" bind:this={modalContainer} class="row g-3 align-items-stretch">
 
             <div class="product-id d-none" data-item-id={product.id}></div>
+
             {#if product}
                 {#each product.images ?? [] as item (item.id ?? item.img)}
+                <div class="product-existing-image product-image-item col-sm-6 col-md-4 d-flex">
+                    <div class="w-100 rounded-4 border border-success-subtle bg-white shadow-sm overflow-hidden d-flex flex-column">
 
-                <div class="product-existing-image product-image-item p-2 gap-2 col-sm-6 col-md-4 d-flex flex-column align-items-end">
-                    <div class="product-data d-none" data-row-id={item.id} data-item-id={item.item_id} data-img={item.img} data-slot={item.slot}></div>
-                    <button on:click|preventDefault={(e) => closeImageSection(e.currentTarget)} type="button" class="btn-close" aria-label="Close"></button>
-                    <button class="w-100 h-100 border border-1 btn btn-light shadow d-flex flex-column justify-content-center gap-2" style="min-height: 15vh;">
-                        <img class="rounded-1" src={'images/productsImages/' + item.img}>
-                    </button>
-                    <input type="file" name="productImage" class="shadow form-control" accept="image/*">
-                    <select class="img-slot-selection form-select" bind:value={item.slot}>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                        <option value="4">Four</option>
-                        <option value="5">Five</option>
-                        <option value="6">Six</option>
-                    </select>
+                        <div class="px-3 py-2 bg-light bg-gradient border-bottom d-flex justify-content-between align-items-center">
+                            <span class="small fw-semibold text-blue-gray d-inline-flex align-items-center gap-2"><i class="fa-regular fa-image opacity-75"></i><span>Image</span></span>
+                            <button on:click|preventDefault={(e) => closeImageSection(e.currentTarget)} type="button" class="btn-close" aria-label="Remove"></button>
+                        </div>
+
+                        <div class="p-2">
+                            <div class="product-data d-none" data-row-id={item.id} data-item-id={item.item_id} data-img={item.img} data-slot={item.slot}></div>
+
+                            <button type="button" class="w-100 border-0 p-0 bg-transparent">
+                                <div class="w-100 rounded-4 overflow-hidden border border-success border-opacity-10 bg-light" style="aspect-ratio: 16 / 10;">
+                                    <img class="w-100 h-100 object-fit-cover" alt="Product image" src={'images/productsImages/' + item.img}>
+                                </div>
+                            </button>
+
+                            <div class="mt-2">
+                                <label class="form-label small text-secondary mb-1 d-inline-flex align-items-center gap-2"><i class="fa-solid fa-upload opacity-75"></i><span>Replace image</span></label>
+                                <input type="file" name="productImage" class="shadow-sm form-control form-control-sm" accept="image/*">
+                            </div>
+
+                            <div class="mt-2">
+                                <label class="form-label small text-secondary mb-1 d-inline-flex align-items-center gap-2"><i class="fa-solid fa-layer-group opacity-75"></i><span>Slot</span></label>
+                                <select class="img-slot-selection form-select form-select-sm" bind:value={item.slot}>
+                                    <option value="1">One</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
+                                    <option value="4">Four</option>
+                                    <option value="5">Five</option>
+                                    <option value="6">Six</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
                 </div>
-
                 {/each}
             {/if}
 
             {#if imageItemsCount < 6}
-            <div id="image-addition-button" class="p-2 col-sm-6 col-md-4 d-flex">
-                <button on:click|preventDefault={(e) => imageSection(e.currentTarget, $baseURLStore)} class="w-100 h-100 border border-1 btn btn-light shadow d-flex flex-column justify-content-center gap-2" style="min-height: 15vh;">
-                    <i class="fs-1 text-secondary text-shadow fa-solid fa-plus"></i>
-                    <span class="fw-light">Add Image</span>
+            <div id="image-addition-button" class="col-sm-6 col-md-4 d-flex">
+                <button on:click|preventDefault={(e) => imageSection(e.currentTarget, $baseURLStore)} class="w-100 rounded-4 border border-dashed border-success border-opacity-25 btn btn-light bg-white shadow-sm d-flex flex-column justify-content-center align-items-center gap-2" style="min-height: 18vh;">
+                    <i class="fs-1 text-success opacity-75 fa-solid fa-plus"></i>
+                    <span class="fw-semibold text-blue-gray">Add Image</span>
+                    <span class="small text-secondary">Up to 6 images</span>
                 </button>
             </div>
             {/if}
 
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-primary" on:click|preventDefault={() => updateImages()}>Save changes</button>
+
+      <div class="modal-footer bg-light bg-gradient border-top d-flex justify-content-between align-items-center">
+        <span class="small text-secondary d-inline-flex align-items-center gap-2"><i class="fa-solid fa-circle-info text-success opacity-75"></i><span>Changes are applied after saving</span></span>
+        <div class="d-inline-flex gap-2">
+          <button type="button" class="btn btn-outline-secondary fw-semibold" data-bs-dismiss="modal" on:click|preventDefault={() => restoreModal()}><i class="fa-solid fa-xmark me-2"></i>Close</button>
+          <button type="button" class="btn btn-success fw-semibold shadow-sm d-inline-flex align-items-center gap-2" on:click|preventDefault={() => updateImages()}><i class="fa-solid fa-floppy-disk"></i><span>Save changes</span></button>
+        </div>
       </div>
+
     </div>
   </div>
 </div>
