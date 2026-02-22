@@ -1,3 +1,5 @@
+<?php $cartCount = (int) (session()->get('cart_items_count') ?? 0); ?>
+
 <header id="site-header" class="fixed-top bg-success shadow-sm" style="min-height: 10vh;">
   <div class="container-fluid px-3">
     <div class="row align-items-center justify-content-center g-2 py-2">
@@ -10,10 +12,18 @@
 
         <div id="delivery-info" class="d-flex flex-column text-white lh-sm">
           <span class="small opacity-75">Deliver to <strong class="opacity-100"><?= $username ?></strong></span>
-          <a href="checkout" class="btn btn-sm btn-outline-light d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-1 px-2">
-            <i class="bi bi-truck"></i>
-            <span>Delivery</span>
-          </a>
+
+          <?php if ($cartCount > 0): ?>
+            <a href="checkout" class="btn btn-sm btn-outline-light d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-1 px-2">
+              <i class="bi bi-truck"></i>
+              <span>Delivery</span>
+            </a>
+          <?php else: ?>
+            <button type="button" class="btn btn-sm btn-outline-light d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-1 px-2 disabled" disabled aria-disabled="true">
+              <i class="bi bi-truck"></i>
+              <span>Delivery</span>
+            </button>
+          <?php endif; ?>
         </div>
       </div>
 
@@ -40,7 +50,7 @@
         <a href="<?= base_url('cart')?>" class="btn btn-sm btn-light d-inline-flex align-items-center gap-2 fw-semibold py-1 px-2 text-decoration-none">
           <span class="position-relative d-inline-flex align-items-center">
             <i class="bi bi-cart3 fs-5"></i>
-            <span id="cartItemsCountIcon" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark fw-bold"><?= esc(session()->get('cart_items_count') ?? 0) ?></span>
+            <span id="cartItemsCountIcon" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark fw-bold"><?= esc($cartCount) ?></span>
           </span>
           <span class="d-none d-lg-inline">Cart</span>
         </a>

@@ -54,12 +54,13 @@
 
                 <div class="w-75 h-100 overflow-hidden d-flex flex-column justify-content-center align-items-start">
                     <p class="fs-6 fw-semibold m-0 my-1">{item.name}</p>
-                    <p class="opacity-75 fs-7 overflow-y-auto no-scrollbar">
-                        {item.description}                    
+                    <p class="opacity-75 fs-7 overflow-y-auto no-scrollbar d-flex flex-wrap align-items-start gap-1">
+                    <span>{item.description}</span>
                         {#each item.tags as tag}
-                            <span class="fw-semibold text-center text-orange fs-7 p-05 border rounded-4 mx-1">{tag}</span>
+                            <span class="fw-semibold text-orange fs-7 p-05 border rounded-4">{tag}</span>
                         {/each}
                     </p>
+
 
                     <div class="d-flex flex-row justify-content-between align-items-center w-100 h-25 gap-2">
                         <button on:click|preventDefault={() => addToCart(item)} class="rounded-1 text-light fw-semibold btn-secondary fs-7 btn">ADD TO CART</button>

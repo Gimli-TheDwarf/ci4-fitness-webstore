@@ -82,25 +82,25 @@ function handleSubmit(e)
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-4 border-bottom border-secondary pb-4">
-                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="Omniva Parcel" id="checkbox-option1" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="radio" value="Omniva Parcel" id="checkbox-option1" required >
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option1">Delivery to an Omniva parcel locker: 2-3 days.</label>
                 <span class="ms-auto">2.99 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4">
-                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="DPD Parcel" id="checkbox-option2" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="radio" value="DPD Parcel" id="checkbox-option2">
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option2">Delivery to a DPD parcel locker: 2-3 days.</label>
                 <span class="ms-auto">2.99 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4">
-                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="SmartPosti Parcel" id="checkbox-option3" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="radio" value="SmartPosti Parcel" id="checkbox-option3" >
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option3">Delivery to a SmartPosti parcel locker: 2-3 days.</label>
                 <span class="ms-auto">4.00 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4 mb-4">
-                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="DPD Courier Delivery" id="checkbox-option4" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="radio" value="DPD Courier Delivery" id="checkbox-option4">
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option4">Home delivery with a DPD courier in 2-3 days.</label>
                 <span class="ms-auto">5.59 €</span>
             </div>
@@ -111,7 +111,7 @@ function handleSubmit(e)
                 <div class="d-flex w-100 flex-column justify-content-center align-items-start gap-3 mb-4">
                     <div class="w-100 d-flex flex-column justify-content-center align-items-start">
                         <label class="d-flex h-100 text-center align-items-center" for="info-input1">City</label>
-                        <select name="City" class="m-0 form-select" id="info-input1" data-placeholder="City"  required>
+                        <select name="City" class="m-0 form-select" id="info-input1" data-placeholder="City" required>
                             <option class="form-option" value=""></option>
                             <option class="form-option" value="WIP">WIP</option>
                         </select>
@@ -125,22 +125,21 @@ function handleSubmit(e)
                         </select>
                     </div>
 
-
                     <div class="d-flex w-100 justify-content-center align-items-center gap-4"> 
                         <div class="w-50 d-flex flex-column justify-content-center align-items-start">
                             <label for="name-input">Name</label>
-                            <input name="Name" type="text" class="form-control" id="name-input" required>
+                            <input name="Name" type="text" class="form-control" id="name-input" required minlength="3" maxlength="40" autocomplete="given-name" inputmode="text" pattern="^[A-Za-zĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž][A-Za-zĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž' -]{0,38}[A-Za-zĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž]$" title="2–40 characters. Letters only; spaces, hyphens and apostrophes allowed.">
                         </div>
 
                         <div class="w-50 d-flex flex-column justify-content-center align-items-start">
                             <label for="surname-input">Surname</label>
-                            <input name="Surname" type="text" class="form-control" id="surname-input" required>
+                            <input name="Surname" type="text" class="form-control" id="surname-input" required minlength="3" maxlength="50" autocomplete="family-name" inputmode="text" pattern="^[A-Za-zĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž][A-Za-zĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž' -]{0,48}[A-Za-zĀČĒĢĪĶĻŅŠŪŽāčēģīķļņšūž]$" title="2–50 characters. Letters only; spaces, hyphens and apostrophes allowed.">
                         </div>
                     </div>
                     
                     <div class="w-100 d-flex flex-column justify-content-center align-items-start">
                         <label for="phone-input">Phone Number</label>
-                        <input name="Phone Number" type="tel" class="form-control" id="phone-input" required>
+                        <input name="Phone Number" type="tel" class="form-control" id="phone-input" required minlength="8" maxlength="20" autocomplete="tel" inputmode="tel" placeholder="+371 2XXXXXXX" pattern="^\+?[0-9][0-9\s-]{6,18}[0-9]$" title="Use digits only (you may include +, spaces, or hyphens). Example: +371 2XXXXXXX">
                     </div>
                 </div>
             </div>
@@ -149,4 +148,4 @@ function handleSubmit(e)
             </ManeuverButtons>
         </form>
     </div>
-</CheckoutLayout>   
+</CheckoutLayout>
