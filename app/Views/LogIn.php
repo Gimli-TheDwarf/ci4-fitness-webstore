@@ -44,19 +44,18 @@
     </body>
 
     <?= view('partials/loadInfo') ?>
-    <script src="<?= base_url('js/toastScript.js') ?>" defer></script>
+    <script src="<?= base_url('js/toastScript.js') ?>"></script>
     <script src="<?= base_url('js/showPassword.js') ?>"></script>
 
-    
     <script>
     document.addEventListener('DOMContentLoaded', () => 
     {
-        <?php if (session()->getFlashdata('success')): ?>
-            notify("Sign in successful");
+        <?php if ($message = session()->getFlashdata('success')): ?>
+            notify(<?= json_encode($message, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?>);
         <?php endif; ?>
 
-        <?php if (session()->getFlashdata('error')): ?>
-            notify("Invalid credentials");
+        <?php if ($message = session()->getFlashdata('error')): ?>
+            notify(<?= json_encode($message, JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT) ?>);
         <?php endif; ?>
     });
     </script>
