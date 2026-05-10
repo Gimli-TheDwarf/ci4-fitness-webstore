@@ -65,7 +65,7 @@ function handleSubmit(e)
                         </div>
 
                     {/each}
-                    <a class="mt-auto link-opacity-100-hover link-offset-2 fw-bold" href="/.delivery">Edit</a>
+                    <a class="mt-auto link-opacity-100-hover link-offset-2 fw-bold" href="./delivery">Edit</a>
                 </div>
             </div>
 

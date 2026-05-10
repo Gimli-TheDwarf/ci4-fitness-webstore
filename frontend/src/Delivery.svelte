@@ -64,8 +64,8 @@ function handleSubmit(e)
             </div>
 
             <div class="d-flex w-100 flex-column justify-content-center align-items-start pt-4">
-                <label name="Phone Number" for="tel-input">Phone Number</label>
-                <input type="text" class="form-control" id="tel-input" required>
+                <label for="tel-input">Phone Number</label>
+                <input name="Phone Number" type="text" class="form-control" id="tel-input" required>
             </div>
         
             <div class="d-flex w-100 justify-content-center align-items-center gap-4 pt-4"> 
