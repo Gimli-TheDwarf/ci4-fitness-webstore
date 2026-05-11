@@ -55,13 +55,13 @@
     };
 </script>
 
-<div id="cart-container-wrapper" class="w-100 d-flex align-items-stretch gap-3 px-3 py-2">
+<div id="cart-container-wrapper" class="container-fluid px-0 d-flex flex-column flex-lg-row align-items-stretch gap-3">
 
-  <div id="cart-items-wrapper" class="flex-grow-1 bg-secondary-subtle bg-gradient border rounded-4 shadow-sm overflow-auto p-2">
+  <div id="cart-items-wrapper" class="flex-grow-1 bg-light bg-gradient border rounded-2 shadow-sm overflow-auto p-2 p-md-3">
     <div class="row g-3">
       {#each ItemsInCart as item}
         <div class="col-12 col-sm-6 col-md-3">
-          <div class="card h-100 border-0 rounded-4 shadow-sm overflow-hidden">
+          <div class="card h-100 border rounded-2 shadow-sm overflow-hidden">
             <img src={item?.images[0]?.img ? 'images/productsImages/' + item?.images[0].img : 'images/defaultImage.png'} class="card-img-top" alt={item.name} />
 
             <div class="card-body text-center bg-light">
@@ -97,8 +97,8 @@
     </div>
   </div>
 
-  <div class="flex-shrink-0 bg-secondary-subtle bg-gradient border rounded-4 shadow-sm p-3" style="width: 320px;">
-    <div id="imageContainer" class="bg-dark bg-gradient rounded-4 p-3 text-center mb-3">
+  <div class="flex-shrink-0 bg-light bg-gradient border rounded-2 shadow-sm p-3" style="width: min(100%, 320px);">
+    <div id="imageContainer" class="bg-blue-gray bg-gradient rounded-2 p-3 text-center mb-3">
       <p class="m-0 fw-semibold text-white text-shadow">Adverts Will Go Here Later</p>
       <img class="rounded-3 img-fluid border mt-2" src={'images/' + 'defaultImage.png'} alt="Advert placeholder" />
     </div>
@@ -113,7 +113,7 @@
       <span class="fw-bold text-orange shadow-sm px-2 rounded bg-light border text-center">€{TotalPrice}</span>
     </div>
 
-    <button disabled={!cartLength} on:click={() => (window.location.href = "checkout")} class="btn btn-secondary fw-semibold shadow-sm rounded-2 w-100 mt-3 d-inline-flex justify-content-center align-items-center gap-2">
+    <button disabled={!cartLength} on:click={() => (window.location.href = "checkout")} class="btn btn-success fw-semibold shadow-sm rounded-2 w-100 mt-3 d-inline-flex justify-content-center align-items-center gap-2">
       <i class="bi bi-credit-card"></i><span>PROCEED TO CHECKOUT</span>
     </button>
   </div>

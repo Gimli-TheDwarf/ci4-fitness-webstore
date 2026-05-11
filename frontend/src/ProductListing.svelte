@@ -11,6 +11,7 @@
     let status = $state(0);
     let product = $state(0);
     let modalContainer;
+    let editorModalElement;
     let imageItemsCount = $state(0);
     let lengthObserver;
     let tagNames;
@@ -71,15 +72,24 @@
 
     onDestroy(() => 
     {
-        lengthObserver.disconnect();
+        lengthObserver?.disconnect();
+        if(editorModalElement?.parentElement === document.body)
+        {
+            editorModalElement.remove();
+        }
     });
 
     onMount(() => 
     {
-        const editorModal = document.getElementById("EditorModalWindow");
+        if(editorModalElement && editorModalElement.parentElement !== document.body)
+        {
+            document.body.appendChild(editorModalElement);
+        }
+
+        const editorModal = editorModalElement;
 
         let attributes = { childList: true }
-        let lengthObserver = new MutationObserver(() => 
+        lengthObserver = new MutationObserver(() => 
         {
             imageItemsCount = modalContainer.querySelectorAll('.product-image-item').length;
             console.log("updated modal container children length: ", imageItemsCount);
@@ -153,13 +163,14 @@
 
         let addition = 
         `
-        <div class="image-addition-section product-image-item p-2 gap-2 col-sm-6 col-md-4 d-flex flex-column align-items-end">
+        <div class="image-addition-section product-image-item col-sm-6 col-md-4 d-flex">
+            <div class="w-100 rounded-2 border border-orange border-opacity-25 bg-white shadow-sm overflow-hidden d-flex flex-column p-2">
             <button type="button" class="btn-close" aria-label="Close"></button>
-            <button class="w-100 h-100 border border-1 btn btn-light shadow d-flex flex-column justify-content-center gap-2" style="min-height: 15vh;">
-                <img class="rounded-1" src="${'images/defaultImage.png'}">
+            <button class="w-100 border border-1 btn btn-light shadow-sm d-flex flex-column justify-content-center gap-2 p-2" style="aspect-ratio: 16 / 10;">
+                <img class="rounded-1 w-100 h-100 object-fit-contain" src="${'images/defaultImage.png'}">
             </button>
-            <input type="file" name="productImage" class="shadow form-control" accept="image/*">
-            <select class="img-slot-selection form-select">
+            <input type="file" name="productImage" class="shadow-sm form-control form-control-sm mt-2" accept="image/*">
+            <select class="img-slot-selection form-select form-select-sm mt-2">
                 <option value="1">One</option>
                 <option value="2">Two</option>
                 <option value="3">Three</option>
@@ -167,6 +178,7 @@
                 <option value="5">Five</option>
                 <option value="6">Six</option>
             </select>
+            </div>
         </div>
         `
 
@@ -402,24 +414,24 @@
 
 {#key mode}
     {#if mode === 'edit'}
-    <div id="adminForm" class="w-100 min-vh-100 d-flex flex-row justify-content-center align-items-stretch gap-3 p-3">
-        <form on:submit|preventDefault={addItem} class="flex-grow-1 d-flex justify-content-center flex-row gap-3 m-0" id="productsForm" method="post" enctype="multipart/form-data">
+    <div id="adminForm" class="w-100">
+        <form on:submit|preventDefault={addItem} class="row g-3 align-items-start m-0" id="productsForm" method="post" enctype="multipart/form-data">
 
-            <div id="basic-input-container" class="d-flex flex-column justify-content-start align-items-center h-100 w-50 p-3 shadow-sm bg-white bg-gradient rounded-2 border">
+            <div id="basic-input-container" class="col-12 col-xl-8 d-flex flex-column justify-content-start align-items-center p-3 p-lg-4 shadow-sm bg-white rounded-2 border">
                 <input name="id" class="product-form-input d-none" value={product.id}>
 
                 <div class="w-100 border-0 rounded-0 border-bottom mb-3 pb-2 d-flex justify-content-between align-items-center">
-                    <span class="fs-5 fw-semibold text-blue-gray d-inline-flex align-items-center gap-2"><i class="fa-solid fa-box-open opacity-75"></i><span>Product Details</span></span>
+                    <span class="h5 fw-semibold text-blue-gray d-inline-flex align-items-center gap-2 mb-0"><i class="fa-solid fa-box-open opacity-75"></i><span>Product Details</span></span>
                     <span class="badge rounded-pill bg-secondary-subtle text-secondary-emphasis border">Editing</span>
                 </div>
 
-                <div class="mb-3 w-100 fs-6 fw-semibold text-blue-gray">
-                    <i class="fa-solid fa-signature mx-1 fs-5"></i><label for="productNameInput" class="form-label">Product Name</label>
+                <div class="mb-3 w-100">
+                    <label for="productNameInput" class="form-label small fw-semibold text-blue-gray d-inline-flex align-items-center gap-2"><i class="fa-solid fa-signature opacity-75"></i><span>Product Name</span></label>
                     <input type="text" id="productNameInput" name="name" class="product-form-input form-control" placeholder="Name…" required minlength="2" maxlength="80" value={product.name}>
                 </div>
 
-                <div class="mb-3 w-100 fs-6 fw-semibold text-blue-gray">
-                    <i class="fa-solid fa-tags mx-1 fs-5"></i><label for="tagsSelection" class="form-label">Tags</label>
+                <div class="mb-3 w-100">
+                    <label for="tagsSelection" class="form-label small fw-semibold text-blue-gray d-inline-flex align-items-center gap-2"><i class="fa-solid fa-tags opacity-75"></i><span>Tags</span></label>
                     <select class="product-form-input border border-opacity-25 rounded-1 w-100" name="tags" id="tagsSelection" multiple bind:this={Select2Element}>
                         {#each $tagsStore as tag}
                             <option value={tag.id}>{tag.name}</option>
@@ -427,18 +439,18 @@
                     </select>
                 </div>
 
-                <div class="w-100 fs-6 fw-semibold text-blue-gray">
-                    <i class="fa-solid fa-money-bill mx-1 fs-5"></i><label for="productPriceInput" class="text-start form-label">Price</label>
+                <div class="w-100 small fw-semibold text-blue-gray">
+                    <label for="productPriceInput" class="text-start form-label d-inline-flex align-items-center gap-2"><i class="fa-solid fa-money-bill opacity-75"></i><span>Price</span></label>
                 </div>
 
                 <div id="productPriceDecreas" class="mb-3 d-flex flex-row w-100 input-group shadow-sm">
                     <span class="fw-semibold input-group-text text-blue-gray">€</span>
                     <input name="price" id="productPriceInput" class="product-form-input form-control text-start no-focus-outline no-spin" bind:value={cost} min="0.01" step="0.01" type="number" required>
-                    <button class="btn btn-outline-success" type="button" on:click|preventDefault={() => cost = Number((cost + 0.01).toFixed(2))} title="Increase price"><i id="priceActionIcon" class="fa-solid fa-plus"></i></button>
+                    <button class="btn btn-outline-secondary" type="button" on:click|preventDefault={() => cost = Number((cost + 0.01).toFixed(2))} title="Increase price"><i id="priceActionIcon" class="fa-solid fa-plus"></i></button>
                 </div>
 
-                <div class="w-100 fs-6 fw-semibold text-blue-gray">
-                    <i class="fa-solid fa-piggy-bank mx-1 fs-5"></i><label for="productDiscountInput" class="text-start form-label">Discount Percentage</label>
+                <div class="w-100 small fw-semibold text-blue-gray">
+                    <label for="productDiscountInput" class="text-start form-label d-inline-flex align-items-center gap-2"><i class="fa-solid fa-piggy-bank opacity-75"></i><span>Discount Percentage</span></label>
                 </div>
 
                 <div class="mb-3 d-flex flex-row w-100 input-group shadow-sm">
@@ -446,58 +458,64 @@
                     <input bind:value={discount} id="productDiscountInput" name="discount_percentage" type="number" min="0" max="99.9" step="0.01" class="product-form-input form-control text-start no-focus-outline no-spin">
                 </div>
 
-                <div class="mb-3 w-100 text-dark p-0 rounded-2 border shadow-sm overflow-hidden flex-grow-1 d-flex flex-column">
-                    <div class="w-100 d-flex justify-content-start align-items-center text-blue-gray p-2 bg-light bg-gradient border-bottom flex-shrink-0">
-                        <i class="fa-solid fa-book me-2 fs-5"></i><label for="productDescriptionInput" class="form-label m-0 fw-semibold">Description</label>
+                <div class="mb-3 w-100 text-dark p-0 rounded-2 border shadow-sm overflow-hidden d-flex flex-column">
+                    <div class="w-100 d-flex justify-content-start align-items-center text-blue-gray p-2 bg-light border-bottom flex-shrink-0">
+                        <i class="fa-solid fa-book me-2 opacity-75"></i><label for="productDescriptionInput" class="form-label m-0 fw-semibold small">Description</label>
                     </div>
 
-                    <div class="p-2 flex-grow-1">
-                        <textarea id="productDescriptionInput" name="description" class="product-form-input form-control border-0 no-focus-outline p-0 w-100 h-100" placeholder="Description…" bind:value={product.description}></textarea>
+                    <div class="p-2">
+                        <textarea id="productDescriptionInput" name="description" class="product-form-input form-control border-0 no-focus-outline p-0 w-100" rows="8" placeholder="Description…" bind:value={product.description}></textarea>
                     </div>
                 </div>
 
-                <div class="w-100 fs-6 text-blue-gray fw-semibold">
-                    <i class="fa-solid fa-clipboard-check fs-5 mx-1"></i><label class="text-start form-label">Product Status</label>
+                <div class="w-100 small text-blue-gray fw-semibold">
+                    <label class="text-start form-label d-inline-flex align-items-center gap-2"><i class="fa-solid fa-clipboard-check opacity-75"></i><span>Product Status</span></label>
                 </div>
 
-                <div class="w-100 fs-6 fw-semibold text-blue-gray form-check form-switch d-flex align-items-center gap-2">
+                <div class="w-100 fw-semibold text-blue-gray form-check form-switch d-flex align-items-center gap-2 border rounded-2 bg-light p-3 ps-5">
                     <input id="status" checked={status == "1" || status == 1} on:change={(e) => syncCheckbox(e.currentTarget)} type="checkbox" name="status" class="rounded-1 form-check-input product-form-input">
                     <span>Status:</span>
-                    <span class={checkboxLabel === true ? 'text-success' : 'text-danger'}>{checkboxLabel === true ? 'Enabled' : 'Disabled'}</span>
+                    <span class={checkboxLabel === true ? 'text-success fw-semibold' : 'text-danger fw-semibold'}>{checkboxLabel === true ? 'Enabled' : 'Disabled'}</span>
                 </div>
 
             </div>
 
-            <div class="d-flex flex-column justify-content-start align-items-center h-100 w-25 gap-3">
+            <div class="col-12 col-xl-4 d-flex flex-column justify-content-start align-items-stretch gap-3">
 
-                <button type="button" data-bs-toggle="modal" data-bs-target="#EditorModalWindow" class="flex-grow-1 p-0 m-0 no-focus-outline btn w-100">
-                    <div class="shadow-sm h-100 w-100 rounded-2 overflow-hidden border bg-white">
-                        <div class="fs-6 text-light d-flex justify-content-center align-items-center flex-row custom-blue h-25 w-100 fw-semibold gap-2">
-                            <i class="fa-solid fa-image"></i><span>Product Images</span>
+                <button type="button" data-bs-toggle="modal" data-bs-target="#EditorModalWindow" class="p-0 m-0 no-focus-outline btn w-100 text-start">
+                    <div class="shadow-sm w-100 rounded-2 overflow-hidden border bg-white">
+                        <div class="text-light d-flex justify-content-between align-items-center flex-row bg-orange w-100 fw-semibold gap-2 px-3 py-2">
+                            <span class="d-inline-flex align-items-center gap-2"><i class="fa-solid fa-image"></i><span>Product Images</span></span>
+                            <i class="fa-solid fa-pen-to-square opacity-75"></i>
                         </div>
 
-                        <div class="p-2 h-75 w-100 bg-white">
-                            <div class="w-100 h-100 rounded-2 border border-dashed border-success border-opacity-25 overflow-hidden d-flex justify-content-center align-items-center bg-light">
-                                <img class="w-100 h-100 object-fit-cover" alt="Product preview" src={product?.images?.[0]?.img ? 'images/productsImages/' + product?.images?.[0]?.img : 'images/defaultImage.png'}>
+                        <div class="p-3 w-100 bg-white">
+                            <div class="w-100 rounded-2 border border-orange border-opacity-25 overflow-hidden d-flex justify-content-center align-items-center bg-light" style="aspect-ratio: 4 / 3;">
+                                <img class="w-100 h-100 object-fit-contain p-2" alt="Product preview" src={product?.images?.[0]?.img ? 'images/productsImages/' + product?.images?.[0]?.img : 'images/defaultImage.png'}>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span class="small text-secondary">Primary preview</span>
+                                <span class="badge rounded-pill bg-orange text-white">{product?.images?.length ?? 0} images</span>
                             </div>
                         </div>
                     </div>
                 </button>
 
-                <button type="button" class="w-100 btn btn-success shadow-sm fw-semibold rounded-2 d-inline-flex justify-content-center align-items-center gap-2" on:click|preventDefault={() => updateSelection()}>
-                    <i class="fa-solid fa-floppy-disk"></i><span>Save Changes</span>
-                </button>
-
-                <div id="undo-changes-container" class="input-group w-100 shadow-sm">
-                    <span class="input-group-text p-2 bg-light"><i id="undoChangesIcon" class="fa-solid fa-rotate-left"></i></span>
-                    <button type="button" id="undoChangesButton" on:click|preventDefault={() => undoChanges()} class="btn btn-outline-secondary border-dashed flex-fill fw-semibold">Undo Changes</button>
-                </div>
-
-                <a href="adminPanel" class="w-100 text-decoration-none mt-auto">
-                    <button type="button" class="w-100 shadow-sm gradient-custom-red border-0 rounded-2 text-light fw-semibold d-inline-flex justify-content-center align-items-center gap-2">
-                        <i class="fa-solid fa-arrow-left"></i><span>Return</span>
+                <div class="bg-white border rounded-2 shadow-sm p-3 d-flex flex-column gap-2">
+                    <button type="button" class="w-100 btn btn-orange shadow-sm fw-semibold rounded-2 d-inline-flex justify-content-center align-items-center gap-2" on:click|preventDefault={() => updateSelection()}>
+                        <i class="fa-solid fa-floppy-disk"></i><span>Save Changes</span>
                     </button>
-                </a>
+
+                    <button type="button" id="undoChangesButton" on:click|preventDefault={() => undoChanges()} class="w-100 btn btn-outline-secondary rounded-2 fw-semibold d-inline-flex justify-content-center align-items-center gap-2">
+                        <i id="undoChangesIcon" class="fa-solid fa-rotate-left"></i><span>Undo Changes</span>
+                    </button>
+
+                    <a href="adminPanel" class="w-100 text-decoration-none">
+                        <button type="button" class="w-100 shadow-sm btn btn-blue-gray border-0 rounded-2 text-light fw-semibold d-inline-flex justify-content-center align-items-center gap-2">
+                            <i class="fa-solid fa-arrow-left"></i><span>Return</span>
+                        </button>
+                    </a>
+                </div>
 
             </div>
         </form>
@@ -507,9 +525,9 @@
 {/key}
 
 
-<div id="EditorModalWindow" class="modal fade" tabindex="-1" aria-hidden="true" role="button" on:click|self={() => restoreModal()}>
+<div bind:this={editorModalElement} id="EditorModalWindow" class="modal fade" tabindex="-1" aria-hidden="true" role="button" on:click|self={() => restoreModal()}>
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content rounded-4 border-0 shadow-lg overflow-hidden">
+    <div class="modal-content rounded-2 border-0 shadow-lg overflow-hidden">
 
       <div class="modal-header bg-light bg-gradient border-bottom">
         <h5 class="modal-title fw-semibold d-inline-flex align-items-center gap-2 m-0 text-blue-gray"><i class="fa-solid fa-pen-to-square opacity-75"></i><span>Image Editor</span></h5>
@@ -524,7 +542,7 @@
             {#if product}
                 {#each product.images ?? [] as item (item.id ?? item.img)}
                 <div class="product-existing-image product-image-item col-sm-6 col-md-4 d-flex">
-                    <div class="w-100 rounded-4 border border-success-subtle bg-white shadow-sm overflow-hidden d-flex flex-column">
+                    <div class="w-100 rounded-2 border border-orange bg-white shadow-sm overflow-hidden d-flex flex-column">
 
                         <div class="px-3 py-2 bg-light bg-gradient border-bottom d-flex justify-content-between align-items-center">
                             <span class="small fw-semibold text-blue-gray d-inline-flex align-items-center gap-2"><i class="fa-regular fa-image opacity-75"></i><span>Image</span></span>
@@ -535,8 +553,8 @@
                             <div class="product-data d-none" data-row-id={item.id} data-item-id={item.item_id} data-img={item.img} data-slot={item.slot}></div>
 
                             <button type="button" class="w-100 border-0 p-0 bg-transparent">
-                                <div class="w-100 rounded-4 overflow-hidden border border-success border-opacity-10 bg-light" style="aspect-ratio: 16 / 10;">
-                                    <img class="w-100 h-100 object-fit-cover" alt="Product image" src={'images/productsImages/' + item.img}>
+                                <div class="w-100 rounded-2 overflow-hidden border border-orange border-opacity-10 bg-light" style="aspect-ratio: 16 / 10;">
+                                    <img class="w-100 h-100 object-fit-contain p-2" alt="Product image" src={'images/productsImages/' + item.img}>
                                 </div>
                             </button>
 
@@ -565,8 +583,8 @@
 
             {#if imageItemsCount < 6}
             <div id="image-addition-button" class="col-sm-6 col-md-4 d-flex">
-                <button on:click|preventDefault={(e) => imageSection(e.currentTarget, $baseURLStore)} class="w-100 rounded-4 border border-dashed border-success border-opacity-25 btn btn-light bg-white shadow-sm d-flex flex-column justify-content-center align-items-center gap-2" style="min-height: 18vh;">
-                    <i class="fs-1 text-success opacity-75 fa-solid fa-plus"></i>
+                <button on:click|preventDefault={(e) => imageSection(e.currentTarget, $baseURLStore)} class="w-100 rounded-2 border border-dashed border-orange border-opacity-25 btn btn-light bg-white shadow-sm d-flex flex-column justify-content-center align-items-center gap-2" style="min-height: 18vh;">
+                    <i class="fs-1 text-orange opacity-75 fa-solid fa-plus"></i>
                     <span class="fw-semibold text-blue-gray">Add Image</span>
                     <span class="small text-secondary">Up to 6 images</span>
                 </button>
@@ -577,10 +595,10 @@
       </div>
 
       <div class="modal-footer bg-light bg-gradient border-top d-flex justify-content-between align-items-center">
-        <span class="small text-secondary d-inline-flex align-items-center gap-2"><i class="fa-solid fa-circle-info text-success opacity-75"></i><span>Changes are applied after saving</span></span>
+        <span class="small text-secondary d-inline-flex align-items-center gap-2"><i class="fa-solid fa-circle-info text-orange opacity-75"></i><span>Changes are applied after saving</span></span>
         <div class="d-inline-flex gap-2">
           <button type="button" class="btn btn-outline-secondary fw-semibold" data-bs-dismiss="modal" on:click|preventDefault={() => restoreModal()}><i class="fa-solid fa-xmark me-2"></i>Close</button>
-          <button type="button" class="btn btn-success fw-semibold shadow-sm d-inline-flex align-items-center gap-2" on:click|preventDefault={() => updateImages()}><i class="fa-solid fa-floppy-disk"></i><span>Save changes</span></button>
+          <button type="button" class="btn btn-orange fw-semibold shadow-sm d-inline-flex align-items-center gap-2" on:click|preventDefault={() => updateImages()}><i class="fa-solid fa-floppy-disk"></i><span>Save changes</span></button>
         </div>
       </div>
 

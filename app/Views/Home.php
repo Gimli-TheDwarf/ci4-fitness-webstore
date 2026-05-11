@@ -3,7 +3,7 @@
     
     <?= view('partials/headSection') ?>
 
-    <body class="no-scrollbar d-flex flex-column min-vh-100">
+    <body class="no-scrollbar d-flex flex-column min-vh-100 bg-blue-gray">
 
     <?= view('partials/header', ['username' => $username]) ?>
 

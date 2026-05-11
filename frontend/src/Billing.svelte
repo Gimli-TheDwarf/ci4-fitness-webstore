@@ -40,9 +40,9 @@ function handleSubmit(e)
 
 <CheckoutLayout>
     <div class="w-100 flex-fill flex-column d-flex justify-content-start align-items-center"  slot="main">
-        <form on:submit={handleSubmit} id="base-info" class="d-flex flex-column justify-content-start align-items-center w-75 h-50 gap-1">
-            <div class="w-100 d-flex gap-4 justify-content-center align-items-center my-4">
-                <div class="w-50 h-100 d-flex flex-column justify-content-start p-4 align-items-start rounded-2 border shadow-sm bg-light">
+        <form on:submit={handleSubmit} id="base-info" class="d-flex flex-column justify-content-start align-items-center w-100 gap-1">
+            <div class="w-100 d-flex flex-column flex-lg-row gap-4 justify-content-center align-items-stretch my-4">
+                <div class="w-100 h-100 d-flex flex-column justify-content-start p-4 align-items-start rounded-2 border shadow-sm bg-white">
                     <h5 class="fw-bold">Billing Information</h5>
                     {#each Object.entries(BillingInfo) as [key, value]}
 
@@ -55,7 +55,7 @@ function handleSubmit(e)
                     <a class="mt-auto link-opacity-100-hover link-offset-2 fw-bold" href="./billing">Edit</a>
                 </div>
 
-                <div class="w-50 h-100 d-flex flex-column justify-content-start p-4 align-items-start rounded-2 border shadow-sm bg-light">
+                <div class="w-100 h-100 d-flex flex-column justify-content-start p-4 align-items-start rounded-2 border shadow-sm bg-white">
                     <h5 class="fw-bold">Delivery Information</h5>
                     {#each Object.entries(DeliveryInfo) as [key, value]}
 
@@ -69,9 +69,9 @@ function handleSubmit(e)
                 </div>
             </div>
 
-            <div class="d-flex flex-column justify-content-center align-items-center rounded-2 border shadow-sm w-100 bg-light p-4 mb-4">
+            <div class="d-flex flex-column justify-content-center align-items-center rounded-2 border shadow-sm w-100 bg-white p-4 mb-4">
                 <h5 class="fw-bold">Payment Method</h5>
-                <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-4 border-bottom border-secondary pb-4">
+                <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-4 border rounded-2 p-3 bg-light">
                     <input name="Payment Method" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="Omniva Parcel" id="payment-method">
                     <label class="d-flex h-100 text-center align-items-center" for="payment-method">Electronic Payment</label>
                 </div>

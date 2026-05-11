@@ -1,8 +1,9 @@
 <!DOCTYPE html>
 <html lan="en">
     <?= view('partials/headSection') ?>
-    <body class="bg-gradient bg-secondary d-flex justify-content-center align-items-center flex-column no-scrollbar">
+    <body class="bg-blue-gray d-flex justify-content-center align-items-center flex-column no-scrollbar">
         <?= view('partials/toast') ?>
+        <section class="homepage-products w-100 min-vh-100 d-flex justify-content-center align-items-center px-3 py-4">
         <div class="d-flex flex-column justify-content-center align-items-center body-wrapper">
 
             <form id="LogInForm" method="post" action="<?= base_url("login_info")?>" class="d-flex flex-column align-items-center justify-content-center gap-1 bg-light p-4 rounded-2 shadow-sm border">
@@ -29,18 +30,19 @@
             </form>
 
             <div class="d-flex flex-column justify-content-center align-items-center mt-3 mb-2">
-                <p id="SignIn" class="m-0 fw-semibold d-inline-flex align-items-center gap-2">
+                <p id="SignIn" class="m-0 fw-semibold d-inline-flex align-items-center gap-2 text-white">
                     <i class="bi bi-person-plus opacity-75"></i>
                     <span>Don't have an account?</span>
-                    <a class="link-primary fw-semibold text-decoration-none" href="<?= base_url('/') ?>">Sign up</a>
+                    <a class="link-light fw-semibold text-decoration-underline" href="<?= base_url('/') ?>">Sign up</a>
                 </p>
             </div>
 
             <div class="w-100 d-flex justify-content-center mb-3">
-                <span class="text-muted fw-semibold small text-uppercase letter-spacing-1">Lave™</span>
+                <span class="text-white fw-semibold small text-uppercase letter-spacing-1">Lave™</span>
             </div>
 
         </div>
+        </section>
     </body>
 
     <?= view('partials/loadInfo') ?>

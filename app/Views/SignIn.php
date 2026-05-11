@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lan="en">
     <?= view('partials/headSection') ?>
-    <body class="d-flex flex-column align-items-center justify-content-center bg-secondary">
+    <body class="d-flex flex-column align-items-center justify-content-center bg-blue-gray">
 
     <?= view('partials/toast') ?>
 
+        <section class="homepage-products w-100 min-vh-100 d-flex justify-content-center align-items-center px-3 py-4">
         <div class="d-flex flex-column justify-content-center align-items-center body-wrapper">
             <div id="MainContainer" class="d-flex justify-content-center shadow align-items-stretch flex-row w-60 h-55 rounded-2 overflow-hidden border">
 
@@ -54,17 +55,18 @@
             </div>
             
             <div class="d-flex flex-column justify-content-center align-items-center mt-3 mb-2">
-                <p id="SignIn" class="m-0 fw-semibold d-inline-flex align-items-center gap-2">
+                <p id="SignIn" class="m-0 fw-semibold d-inline-flex align-items-center gap-2 text-white">
                     <i class="bi bi-person-check opacity-75"></i>
                     <span>Already have an account?</span>
-                    <a class="link-primary fw-semibold text-decoration-none" href="<?= base_url('login') ?>">Log in</a>
+                    <a class="link-light fw-semibold text-decoration-underline" href="<?= base_url('login') ?>">Log in</a>
                 </p>
             </div>
 
             <div class="w-100 d-flex justify-content-center mb-3">
-                <span class="text-muted fw-semibold small text-uppercase letter-spacing-1">Lave™</span>
+                <span class="text-white fw-semibold small text-uppercase letter-spacing-1">Lave™</span>
             </div>
         </div>
+        </section>
 
     <?= view('partials/loadInfo') ?>
     <script src="<?= base_url('js/toastScript.js') ?>"></script>

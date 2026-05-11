@@ -73,33 +73,33 @@ function handleSubmit(e)
 </script>
 
 <CheckoutLayout>
-    <div class="w-100 flex-fill d-flex justify-content-center align-items-start " slot="main">
-        <form on:submit={handleSubmit} id="base-info" class="d-flex flex-column justify-content-start align-items-center w-75 h-50 gap-1">
+    <div class="w-100 flex-fill d-flex justify-content-center align-items-start" slot="main">
+        <form on:submit={handleSubmit} id="base-info" class="d-flex flex-column justify-content-start align-items-center w-100 gap-1">
 
-            <div class="flex-column w-100 gap-2 pt-4 text-blacker">
-                <h1 class="w-100 text-start">Delivery</h1>
-                <h5 class="w-100 text-dark text-start">Choose a delivery point</h5>
+            <div class="flex-column w-100 gap-2 text-blacker">
+                <h1 class="w-100 text-start fw-semibold mb-1">Delivery</h1>
+                <h5 class="w-100 text-dark text-start fw-normal opacity-75">Choose a delivery point</h5>
             </div>
 
-            <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-4 border-bottom border-secondary pb-4">
+            <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-4 border rounded-2 p-3 bg-white shadow-sm">
                 <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="Omniva Parcel" id="checkbox-option1" on:click={(e) => affirmSelection(e.currentTarget)}>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option1">Delivery to an Omniva parcel locker: 2-3 days.</label>
                 <span class="ms-auto">2.99 €</span>
             </div>
 
-            <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4">
+            <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-2 border rounded-2 p-3 bg-white shadow-sm">
                 <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="DPD Parcel" id="checkbox-option2" on:click={(e) => affirmSelection(e.currentTarget)}>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option2">Delivery to a DPD parcel locker: 2-3 days.</label>
                 <span class="ms-auto">2.99 €</span>
             </div>
 
-            <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4">
+            <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-2 border rounded-2 p-3 bg-white shadow-sm">
                 <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="SmartPosti Parcel" id="checkbox-option3" on:click={(e) => affirmSelection(e.currentTarget)}>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option3">Delivery to a SmartPosti parcel locker: 2-3 days.</label>
                 <span class="ms-auto">4.00 €</span>
             </div>
 
-            <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 border-bottom border-secondary py-4 mb-4">
+            <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-2 border rounded-2 p-3 bg-white shadow-sm mb-4">
                 <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="DPD Courier Delivery" id="checkbox-option4" on:click={(e) => affirmSelection(e.currentTarget)}>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option4">Home delivery with a DPD courier in 2-3 days.</label>
                 <span class="ms-auto">5.59 €</span>
@@ -108,7 +108,7 @@ function handleSubmit(e)
             <div class="d-flex w-100 flex-column justify-content-start align-items-center gap-4 mt-4">
                 <h5 class="w-100 text-dark text-start">Please confirm the delivery details</h5>
 
-                <div class="d-flex w-100 flex-column justify-content-center align-items-start gap-3 mb-4">
+                <div class="d-flex w-100 flex-column justify-content-center align-items-start gap-3 mb-4 bg-white border rounded-2 shadow-sm p-3">
                     <div class="w-100 d-flex flex-column justify-content-center align-items-start">
                         <label class="d-flex h-100 text-center align-items-center" for="info-input1">City</label>
                         <select name="City" class="m-0 form-select" id="info-input1" data-placeholder="City"  required>
@@ -126,13 +126,13 @@ function handleSubmit(e)
                     </div>
 
 
-                    <div class="d-flex w-100 justify-content-center align-items-center gap-4"> 
-                        <div class="w-50 d-flex flex-column justify-content-center align-items-start">
+                    <div class="d-flex w-100 flex-column flex-md-row justify-content-center align-items-center gap-4">
+                        <div class="flex-fill w-100 d-flex flex-column justify-content-center align-items-start">
                             <label for="name-input">Name</label>
                             <input name="Name" type="text" class="form-control" id="name-input" required>
                         </div>
 
-                        <div class="w-50 d-flex flex-column justify-content-center align-items-start">
+                        <div class="flex-fill w-100 d-flex flex-column justify-content-center align-items-start">
                             <label for="surname-input">Surname</label>
                             <input name="Surname" type="text" class="form-control" id="surname-input" required>
                         </div>
@@ -149,4 +149,4 @@ function handleSubmit(e)
             </ManeuverButtons>
         </form>
     </div>
-</CheckoutLayout>   
+</CheckoutLayout>

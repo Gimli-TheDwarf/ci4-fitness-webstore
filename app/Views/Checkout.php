@@ -1,7 +1,7 @@
 <?= $this->extend('Home') ?>
 
     <?= $this->section('layout-content') ?>
-        <div id="checkout-container" class="bg-secondary d-flex min-vh-100 w-100 justify-content-center">
+        <div id="checkout-container" class="d-flex min-vh-100 w-100 justify-content-center align-items-start p-3 p-md-4">
 
         </div>
     <?= $this->endSection() ?>

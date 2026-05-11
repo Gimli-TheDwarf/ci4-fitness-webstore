@@ -162,18 +162,26 @@
 
 </script>
 
-<div class="d-flex flex-column justify-content-start align-items-center w-100 gap-2">
-    <div class="bg-white bg-gradient p-2 rounded-1 border border-dashed w-75 d-flex align-items-center justify-content-start flex-column" style="max-height: 40vh">
+<div class="d-flex flex-column justify-content-start align-items-center w-100 gap-3">
+    <div class="homepage-filter-toolbar bg-white p-3 rounded-2 border shadow-sm w-100 d-flex align-items-center justify-content-start flex-column" style="max-height: 40vh">
 
         <div class="w-100 d-flex justify-content-center align-items-center flex-column">
-            <div class="w-100 border-0 rounded-0 border-bottom mb-2 d-flex justify-content-center">
-                <span class="text-center fs-5 fw-semibold p-2 text-blue-gray">Available Tags</span>
+            <div class="w-100 border-0 rounded-0 border-bottom mb-2 pb-2 d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2 text-blue-gray">
+                    <span class="admin-icon-box d-inline-flex justify-content-center align-items-center rounded-2 bg-orange text-white shadow-sm fs-5">
+                        <i class="fa-solid fa-tags"></i>
+                    </span>
+                    <div>
+                        <h1 class="h5 fw-semibold mb-0">Available Tags</h1>
+                        <span class="small text-secondary">Organize product categories.</span>
+                    </div>
+                </div>
             </div>
 
             <div class="d-flex w-100 justify-content-start align-items-center">
-                <div class="input-group mb-2 w-25">
+                <div class="input-group mb-2">
                     <span class="input-group-text shadow-sm fs-5 text-blue-gray fw-semibold"><i class="bi bi-database-add"></i></span>
-                    <button type="button" class="shadow-sm form-control btn btn-light border text-start text-secondary" data-bs-target="#global-modal-window" data-bs-toggle="modal" data-mode="add-tag" data-data="none" data-info="Create a New Tag?">Create new tag...</button>
+                    <button type="button" class="shadow-sm form-control btn btn-orange text-start fw-semibold" data-bs-target="#global-modal-window" data-bs-toggle="modal" data-mode="add-tag" data-data="none" data-info="Create a New Tag?">Create new tag...</button>
                 </div>
             </div>
 
@@ -188,8 +196,8 @@
                 {#each tags as tag}
                 <div class="d-flex col-12 col-lg-4">
                     <div class="d-flex p-2 fs-5 flex-grow-1 h-100">
-                        <button id={tag.id} type="button" class="shadow-sm rounded-end-0 btn btn-danger" data-bs-target="#global-modal-window" data-bs-toggle="modal" data-mode="delete-tag" data-data={tag.id} data-info={`Remove "` + tag.name + `" tag from the database?`}><i class="fw-semibold fa-solid fa-circle-xmark"></i></button>
-                        <button id={tag.id +'_'+ tag.name} type="button "class="shadow-sm rounded-start-0 btn btn-light border border-danger text-center flex-grow-1" data-bs-target="#global-modal-window" data-bs-toggle="modal" data-mode="tag-change-name" data-data={tag.id} data-info={`Change Tag's "` + tag.name +`" Name?`}>{tag.name}</button>
+                        <button id={tag.id} type="button" class="shadow-sm rounded-end-0 btn btn-orange" data-bs-target="#global-modal-window" data-bs-toggle="modal" data-mode="delete-tag" data-data={tag.id} data-info={`Remove "` + tag.name + `" tag from the database?`}><i class="fw-semibold fa-solid fa-circle-xmark"></i></button>
+                        <button id={tag.id +'_'+ tag.name} type="button "class="shadow-sm rounded-start-0 btn btn-light border text-blue-gray text-center flex-grow-1" data-bs-target="#global-modal-window" data-bs-toggle="modal" data-mode="tag-change-name" data-data={tag.id} data-info={`Change Tag's "` + tag.name +`" Name?`}>{tag.name}</button>
                     </div>
                 </div>
                 {/each}
@@ -199,7 +207,7 @@
         </div>
     </div>
 
-    <div class="bg-white bg-gradient rounded-1 border w-75 d-flex justify-content-center flex-column">
+    <div class="bg-white rounded-2 border w-100 d-flex justify-content-center flex-column shadow-sm">
         
         <div class="w-100 d-flex justify-content-start align-items-center border-bottom mb-3">
             <div class="input-group w-100 p-2">
@@ -216,7 +224,7 @@
                         {#if secondaryContainerInfo != ""}
                             {#each secondaryContainerInfo as product}
                                 <div class="d-flex justify-content-center align-items-center col-6 col-lg-3">
-                                    <button id={product.id} on:click={(e) => (searchItemTags(e.currentTarget))} class="w-100 h-100 btn btn-outline-success border-2 fw-semibold">{product.name}</button>
+                                    <button id={product.id} on:click={(e) => (searchItemTags(e.currentTarget))} class="w-100 h-100 btn btn-outline-secondary border-2 fw-semibold">{product.name}</button>
                                 </div>
                             {/each}
                         {:else}
@@ -239,14 +247,14 @@
 
     </div>
 
-    <div class="bg-white bg-gradient p-2 rounded-1 border border-dashed w-75 d-flex justify-content-center flex-column">
+    <div class="bg-white p-3 rounded-2 border w-100 d-flex justify-content-center flex-column shadow-sm">
         <div class="w-100 border-0 rounded-0 border-bottom mb-2 d-flex justify-content-center">
             <span class="text-center fs-5 fw-semibold p-2 text-blue-gray">Product Additions</span>
         </div>
         <form enctype="multipart/form-data" on:submit={(e) => createProduct(e)} class="w-100 d-flex flex-column justify-content-center align-items-center m-0">
 
-            <div class="w-100 d-flex justify-content-center align-items-center mb-4 flex-row gap-4">
-                <div class="d-flex flex-column w-50 h-100 justify-content-center align-items-start gap-2">
+            <div class="w-100 d-flex justify-content-center align-items-stretch mb-4 flex-column flex-lg-row gap-4">
+                <div class="d-flex flex-column flex-fill h-100 justify-content-center align-items-start gap-2">
                     <div class="w-100 border-0 rounded-0 mb-2 d-flex gap-4 justify-content-center align-items-center">
                     
                         <div class="w-50 d-flex flex-column justify-content-center align-items-start">
@@ -287,7 +295,7 @@
 
                         <div class="d-flex flex-column justify-content-between align-items-start">
                             <label for="product-status">Product Submission</label>
-                            <button type="submit" class="rounded-1 btn btn-outline-primary fw-semibold shadow-sm">Submit Product</button>
+                            <button type="submit" class="rounded-1 btn btn-orange fw-semibold shadow-sm">Submit Product</button>
                         </div>
 
                     </div>
@@ -297,7 +305,7 @@
                     </div>
                 </div>
 
-                <div class="d-flex flex-column w-50 h-100 justify-content-center align-items-start">
+                <div class="d-flex flex-column flex-fill h-100 justify-content-center align-items-start">
                     <label for="product-status">Product Description</label>
                     <div class="w-100 h-100 m-0 p-2 d-flex justify-content-center align-items-center rounded-1 shadow-sm border border-dashed">
                             <textarea maxlength="2000" minlength="5" name="description" class="form-control h-100 m-0 p-1" required rows="4"></textarea>

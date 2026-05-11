@@ -1,16 +1,16 @@
-<header id="site-header" class="fixed-top bg-success shadow-sm" style="min-height: 10vh;">
+<header id="site-header" class="fixed-top bg-success bg-gradient shadow-sm">
   <div class="container-fluid px-3">
     <div class="row align-items-center justify-content-center g-2 py-2">
 
       <!-- Left -->
       <div id="left-side" class="col-12 col-md-4 d-flex align-items-center justify-content-center justify-content-md-start gap-3">
         <a id="home-page-icon" href="<?= base_url('homepage')?>" class="d-inline-flex align-items-center">
-          <img title="Home" style="height: 50px;" class="rounded-2 shadow-sm hover-fx-1" src="<?= base_url('images/Lave1.png') ?>"alt="Lave logo">
+          <img title="Home" class="site-logo rounded-2 shadow-sm hover-fx-1" src="<?= base_url('images/Lave1.png') ?>" alt="Lave logo">
         </a>
 
         <div id="delivery-info" class="d-flex flex-column text-white lh-sm">
           <span class="small opacity-75">Deliver to <strong class="opacity-100"><?= $username ?></strong></span>
-          <a href="checkout" class="btn btn-sm btn-outline-light d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-1 px-2">
+          <a href="<?= base_url('checkout') ?>" class="btn btn-sm btn-outline-light d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-1 px-2">
             <i class="bi bi-truck"></i>
             <span>Delivery</span>
           </a>
@@ -26,7 +26,7 @@
            class="col-12 col-md-4 d-flex align-items-center justify-content-center justify-content-md-end gap-3">
 
         <?php if(session()->get('isLoggedIn')): ?>
-          <button onclick="window.location.href = 'account'" title="Account Info" class="btn btn-sm btn-outline-light d-inline-flex align-items-center gap-2 fw-semibold py-1 px-2" aria-label="Account">
+          <button onclick="window.location.href = '<?= base_url('account') ?>'" title="Account Info" class="btn btn-sm btn-outline-light d-inline-flex align-items-center gap-2 fw-semibold py-1 px-2" aria-label="Account">
             <i class="bi bi-person-circle"></i>
             <span class="d-none d-lg-inline">Account</span>
           </button>
