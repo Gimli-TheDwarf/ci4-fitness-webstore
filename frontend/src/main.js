@@ -148,6 +148,7 @@ document.addEventListener('DOMContentLoaded', () =>
         props: 
         {
           products: productsData,
+          baseURL: baseURL,
         }
       }
     )

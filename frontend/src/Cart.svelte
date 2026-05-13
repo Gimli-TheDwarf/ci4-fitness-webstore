@@ -7,7 +7,6 @@
     $: cartLength = ItemsInCart.length;
 
     $: TotalPrice = Number(ItemsInCart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.quantity) || 0), 0).toFixed(2));
-    //reduces to the array to a single vlaue by this formula - (sum + item.price * item.quantity), initial sum value is 0
     console.log("AAAAAAAAAA", ItemsInCart);
 
     function removeItem(item)
@@ -55,73 +54,109 @@
     };
 </script>
 
-<div id="cart-container-wrapper" class="container-fluid px-0 d-flex flex-column flex-lg-row align-items-stretch gap-3">
+<div id="cart-container-wrapper" class="container-xxl px-0 d-flex flex-column gap-3">
+  <div class="homepage-filter-toolbar bg-white border shadow-sm rounded-2 p-3 d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 w-100">
+    <div class="d-flex align-items-center gap-2 text-blue-gray">
+      <span class="admin-icon-box d-inline-flex justify-content-center align-items-center rounded-2 bg-orange text-white shadow-sm fs-5">
+        <i class="bi bi-bag-check-fill"></i>
+      </span>
+      <div>
+        <h1 class="h5 fw-semibold mb-0">Cart</h1>
+        <span class="small text-secondary">Review quantities and confirm the order total.</span>
+      </div>
+    </div>
+    <span class="badge rounded-pill bg-light text-blue-gray border px-3 py-2">{cartLength} items</span>
+  </div>
 
-  <div id="cart-items-wrapper" class="flex-grow-1 bg-light bg-gradient border rounded-2 shadow-sm overflow-auto p-2 p-md-3">
-    <div class="row g-3">
-      {#each ItemsInCart as item}
-        <div class="col-12 col-sm-6 col-md-3">
-          <div class="card h-100 border rounded-2 shadow-sm overflow-hidden">
-            <img src={item?.images[0]?.img ? 'images/productsImages/' + item?.images[0].img : 'images/defaultImage.png'} class="card-img-top" alt={item.name} />
-
-            <div class="card-body text-center bg-light">
-              <p class="m-0 fw-semibold">{item.name}</p>
-              <p class="m-0 small opacity-75">{item.description}</p>
-            </div>
-
-            <div class="card-footer bg-white border-0 pt-2">
-              <div class="small d-flex flex-column gap-1">
-                <div class="d-flex justify-content-between"><span class="opacity-75">Price:</span><span class="fw-semibold">€{item.price}</span></div>
-                <div class="d-flex justify-content-between"><span class="opacity-75">Qty:</span><span class="fw-semibold">{item.quantity}</span></div>
-                <div class="d-flex justify-content-between"><span class="opacity-75">Total:</span><span class="fw-semibold">€{(Number(item.price) * Number(item.quantity)).toFixed(2)}<br/></span></div>
-              </div>
-
-              <div class="mt-2 d-flex justify-content-center" id={'cart-controls-wrapper-' + item.name}>
-                <div class="input-group input-group-sm w-75 shadow-sm rounded-2 overflow-hidden">
-                  {#if item.quantity === "0"}
-                    <button on:click|preventDefault={() => removeItem(item)} class="btn btn-outline-danger px-2" type="button"><i class="bi bi-trash3"></i></button>
-                  {:else if item.quantity > 0}
-                    <button on:click|preventDefault={() => Change(item, -1)} class="btn btn-outline-secondary px-2" type="button"><i class="bi bi-dash-lg"></i></button>
-                  {/if}
-
-                  <input id={'quantity-input-' + item.name} class="form-control text-center border-start-0 border-end-0 no-spin no-focus-outline" type="number" min="0" step="1" bind:value={item.quantity} />
-
-                  <button on:click|preventDefault={() => Change(item, 1)} class="btn btn-outline-secondary px-2" type="button"><i class="bi bi-plus-lg"></i></button>
+  <div class="row g-3 align-items-start">
+    <section id="cart-items-wrapper" class="col-12 col-lg-8 col-xl-9">
+      <div class="bg-light bg-gradient border rounded-2 shadow-sm overflow-hidden p-2 p-md-3">
+      {#if !cartLength}
+        <div class="d-flex justify-content-center align-items-center text-center bg-white border rounded-2 min-vh-25">
+          <p class="m-0 opacity-75 fs-5">Your cart is empty.</p>
+        </div>
+      {:else}
+        <div class="d-flex flex-column gap-3">
+          {#each ItemsInCart as item}
+            <article class="row g-0 bg-white border rounded-2 shadow-sm overflow-hidden">
+              <div class="col-12 col-md-4 col-xl-3 product-preview-image-panel d-flex justify-content-center align-items-center p-3">
+                <div class="ratio ratio-4x3 bg-white rounded-2 shadow-sm w-100">
+                  <img src={item?.images[0]?.img ? 'images/productsImages/' + item?.images[0].img : 'images/defaultImage.png'} class="object-fit-contain rounded-2 p-2" alt={item.name} />
                 </div>
               </div>
-            </div>
 
-          </div>
+              <div class="col-12 col-md-8 col-xl-9 d-flex flex-column gap-3 p-3 p-lg-4">
+                <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-start gap-2">
+                  <div>
+                    <h2 class="h6 fw-semibold text-blue-gray mb-1">{item.name}</h2>
+                    <p class="small text-secondary mb-0">{item.description}</p>
+                  </div>
+                  <span class="fw-semibold text-orange text-nowrap">&euro;{item.price}</span>
+                </div>
+
+                <div class="row g-2">
+                  <div class="col-12 col-sm-6">
+                    <div class="bg-light border rounded-2 px-3 py-2 h-100">
+                    <span class="small text-secondary d-block">Quantity</span>
+                    <span class="fw-semibold text-blue-gray">{item.quantity}</span>
+                    </div>
+                  </div>
+                  <div class="col-12 col-sm-6">
+                    <div class="bg-light border rounded-2 px-3 py-2 h-100">
+                    <span class="small text-secondary d-block">Line total</span>
+                    <span class="fw-semibold text-blue-gray">&euro;{(Number(item.price) * Number(item.quantity)).toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="d-flex flex-column flex-sm-row justify-content-between align-items-sm-center gap-3">
+                  <div class="input-group input-group-sm shadow-sm rounded-2 overflow-hidden w-100" id={'cart-controls-wrapper-' + item.name}>
+                    {#if item.quantity === "0"}
+                      <button on:click|preventDefault={() => removeItem(item)} class="btn btn-outline-danger px-2" type="button" aria-label="Remove item"><i class="bi bi-trash3"></i></button>
+                    {:else if item.quantity > 0}
+                      <button on:click|preventDefault={() => Change(item, -1)} class="btn btn-outline-secondary px-2" type="button" aria-label="Decrease quantity"><i class="bi bi-dash-lg"></i></button>
+                    {/if}
+
+                    <input id={'quantity-input-' + item.name} class="form-control text-center border-start-0 border-end-0 no-spin no-focus-outline" type="number" min="0" step="1" bind:value={item.quantity} />
+
+                    <button on:click|preventDefault={() => Change(item, 1)} class="btn btn-outline-secondary px-2" type="button" aria-label="Increase quantity"><i class="bi bi-plus-lg"></i></button>
+                  </div>
+
+                  <button on:click|preventDefault={() => removeItem(item)} class="btn btn-outline-danger btn-sm rounded-2 fw-semibold d-inline-flex align-items-center justify-content-center gap-2" type="button">
+                    <i class="bi bi-trash3"></i><span>Remove</span>
+                  </button>
+                </div>
+              </div>
+            </article>
+          {/each}
         </div>
-      {/each}
-    </div>
+      {/if}
+      </div>
+    </section>
+
+    <aside class="col-12 col-lg-4 col-xl-3">
+      <div class="bg-white border rounded-2 shadow-sm overflow-hidden sticky-lg-top">
+      <div class="product-preview-image-panel px-3 py-4 text-center text-white">
+        <span class="small text-uppercase opacity-75 fw-semibold">Order</span>
+        <h2 class="h5 fw-semibold mb-0">Summary</h2>
+      </div>
+
+      <div class="p-3 p-lg-4 d-flex flex-column gap-3">
+        <div class="d-flex justify-content-between align-items-center">
+          <span class="text-secondary">Items</span>
+          <span class="fw-semibold text-blue-gray">{cartLength}</span>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-center border-top pt-3">
+          <span class="fw-semibold">Total</span>
+          <span class="fw-bold text-orange fs-5">&euro;{TotalPrice}</span>
+        </div>
+
+        <button disabled={!cartLength} on:click={() => (window.location.href = "checkout")} class="btn btn-success fw-semibold shadow-sm rounded-2 w-100 d-inline-flex justify-content-center align-items-center gap-2">
+          <i class="bi bi-credit-card"></i><span>Proceed to checkout</span>
+        </button>
+      </div>
+      </div>
+    </aside>
   </div>
-
-  <div class="flex-shrink-0 bg-light bg-gradient border rounded-2 shadow-sm p-3" style="width: min(100%, 320px);">
-    <div id="imageContainer" class="bg-blue-gray bg-gradient rounded-2 p-3 text-center mb-3">
-      <p class="m-0 fw-semibold text-white text-shadow">Adverts Will Go Here Later</p>
-      <img class="rounded-3 img-fluid border mt-2" src={'images/' + 'defaultImage.png'} alt="Advert placeholder" />
-    </div>
-
-    <div class="d-flex justify-content-between align-items-center">
-      <span class="fw-semibold">Subtotal</span>
-      <span class="small opacity-75">({cartLength} items)</span>
-    </div>
-
-    <div class="mt-1 d-flex justify-content-between align-items-center">
-      <span class="opacity-75 small">Total</span>
-      <span class="fw-bold text-orange shadow-sm px-2 rounded bg-light border text-center">€{TotalPrice}</span>
-    </div>
-
-    <button disabled={!cartLength} on:click={() => (window.location.href = "checkout")} class="btn btn-success fw-semibold shadow-sm rounded-2 w-100 mt-3 d-inline-flex justify-content-center align-items-center gap-2">
-      <i class="bi bi-credit-card"></i><span>PROCEED TO CHECKOUT</span>
-    </button>
-  </div>
-
 </div>
-<style>
-  .card-title 
-  {
-    font-size: clamp(0.8rem, 2vw, 1.25rem);
-  }
-</style>

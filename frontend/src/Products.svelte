@@ -3,6 +3,7 @@
     export let baseURL;
     import { onMount, onDestroy } from 'svelte';
     import {addToFavorites, decrease, increase, addToCart} from './favorites.js';
+    import {showProductPreviewModal} from './productPreviewModal.js';
 
     console.log("INFO: " , info);
     let imageModalElement;
@@ -22,21 +23,6 @@
             imageModalElement.remove();
         }
     });
-
-    function showModal(item, eventT)
-    {
-        const BootstrapModal = imageModalElement;
-
-        let eventTargetSrc = eventT.currentTarget.src;
-
-        BootstrapModal.querySelector(".modal-title").textContent = item.name;
-        BootstrapModal.querySelector(".modalImage").src = eventTargetSrc;
-        BootstrapModal.querySelector(".modalImage").alt = item.name;
-        BootstrapModal.querySelector("#modalText").textContent = item.description;
-
-        const newModal = new bootstrap.Modal(BootstrapModal);
-        newModal.show();
-    }
 
     function changeImage(image, name)
     {
@@ -67,7 +53,7 @@
                 <article class="product-card d-flex shadow-sm flex-column align-items-stretch rounded-2 overflow-hidden border bg-white w-100">
 
                     <div class="product-card-media w-100 overflow-hidden bg-blue-gray d-flex justify-content-center align-items-center position-relative">
-                        <img on:click|preventDefault={(e) => showModal(item, e)} id={item.name + "-main-image"} class="SvelteImage cursor-pointer w-100 h-100 object-fit-contain" src="{item?.images[0]?.img ? baseURL + 'images/productsImages/' + item?.images[0].img : baseURL + 'images/defaultImage.png'}" alt={item.name}>
+                        <img on:click|preventDefault={(e) => showProductPreviewModal(imageModalElement, item, e.currentTarget)} id={item.name + "-main-image"} class="SvelteImage cursor-pointer w-100 h-100 object-fit-contain" src="{item?.images[0]?.img ? baseURL + 'images/productsImages/' + item?.images[0].img : baseURL + 'images/defaultImage.png'}" alt={item.name}>
                         {#if item.discount_percentage > 0}
                             <span class="badge d-inline-flex align-items-center gap-1 position-absolute top-0 start-0 z-1 m-2 px-2 py-1 rounded-pill bg-orange bg-gradient shadow-sm fw-semibold text-uppercase">{item.discount_percentage}% <span class="small opacity-75">OFF</span></span>
                         {/if}

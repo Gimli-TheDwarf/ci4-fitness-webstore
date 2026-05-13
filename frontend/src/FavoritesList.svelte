@@ -1,19 +1,34 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import {addToFavorites, decrease, increase, addToCart} from './favorites.js';
-    let { products } = $props();
+    import {showProductPreviewModal} from './productPreviewModal.js';
+    let { products, baseURL } = $props();
     let favorites = $state([]);
+    let imageModalElement;
 
     onMount(() => 
     {
-    let list = products?.array ?? products ?? [];
+        if(imageModalElement && imageModalElement.parentElement !== document.body)
+        {
+            document.body.appendChild(imageModalElement);
+        }
 
-    for (let element of list) 
+        let list = products?.array ?? products ?? [];
+
+        for (let element of list) 
         {
             if (element?.favorite === true) 
             {
-            favorites.push(element);
+                favorites.push(element);
             }
+        }
+    });
+
+    onDestroy(() =>
+    {
+        if(imageModalElement?.parentElement === document.body)
+        {
+            imageModalElement.remove();
         }
     });
 
@@ -53,7 +68,7 @@
                 <article class="product-card d-flex shadow-sm flex-column align-items-stretch rounded-2 overflow-hidden border bg-white w-100">
 
                     <div class="product-card-media w-100 overflow-hidden bg-blue-gray d-flex justify-content-center align-items-center position-relative">
-                        <img class="SvelteImage w-100 h-100 object-fit-contain" src="{item?.images[0]?.img ? 'images/productsImages/' + item?.images[0].img : 'images/defaultImage.png'}" alt={item.name}>
+                        <img on:click|preventDefault={(e) => showProductPreviewModal(imageModalElement, item, e.currentTarget)} class="SvelteImage cursor-pointer w-100 h-100 object-fit-contain" src="{item?.images[0]?.img ? baseURL + 'images/productsImages/' + item?.images[0].img : baseURL + 'images/defaultImage.png'}" alt={item.name}>
                         {#if item.discount_percentage > 0}
                             <span class="badge d-inline-flex align-items-center gap-1 position-absolute top-0 start-0 z-1 m-2 px-2 py-1 rounded-pill bg-orange bg-gradient shadow-sm fw-semibold text-uppercase">{item.discount_percentage}% <span class="small opacity-75">OFF</span></span>
                         {/if}
@@ -103,5 +118,42 @@
             </div>
         {/each}
     {/if}
+    </div>
+
+    <div bind:this={imageModalElement} id="ImageModal" class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 rounded-2 overflow-hidden shadow-lg bg-white">
+                <div class="row g-0">
+                    <div class="col-12 col-lg-7 bg-blue-gray product-preview-image-panel d-flex justify-content-center align-items-center p-3 position-relative">
+                        <span class="position-absolute top-0 start-0 m-3 badge rounded-pill bg-orange text-white shadow-sm">Product preview</span>
+                        <img src="" alt="preview" class="modalImage w-100 rounded-2 bg-white object-fit-contain shadow-sm" style="max-height: 52vh; aspect-ratio: 4 / 3;">
+                    </div>
+
+                    <div class="col-12 col-lg-5 bg-white d-flex flex-column">
+                        <div class="modal-header border-bottom px-4 py-3">
+                            <div>
+                                <h5 class="modal-title fw-semibold text-blue-gray mb-0">Preview</h5>
+                            </div>
+                            <button type="button" class="btn-close shadow-sm" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+
+                        <div class="modal-body p-4 d-flex flex-column gap-3">
+                            <div class="border rounded-2 bg-light p-3 shadow-sm">
+                                <span class="small fw-semibold text-blue-gray d-inline-flex align-items-center gap-2 mb-2">
+                                    <i class="bi bi-card-text text-orange"></i><span>Description</span>
+                                </span>
+                                <p class="m-0 text-secondary lh-base" id="modalText"></p>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer border-top bg-light px-4 py-3 d-flex justify-content-end">
+                            <button type="button" class="btn btn-orange rounded-2 fw-semibold d-inline-flex align-items-center gap-2" data-bs-dismiss="modal">
+                                <i class="bi bi-check2"></i><span>Done</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
