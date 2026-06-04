@@ -54,12 +54,12 @@
         </div>
 
         <div class="col-sm-6 col-lg-3 d-flex" style="min-height: 15vh">
-            <button on:click|preventDefault={() => ChangeSelection('users')} class="btn btn-light overflow-hidden w-100 p-0 input-group d-flex flex-column border rounded-2 shadow-sm">
+            <button disabled class="opacity-50 overflow-hidden w-100 p-0 input-group d-flex flex-column border rounded-2 shadow-sm bg-white">
                 <div class="w-100 flex-grow-1 d-flex justify-content-between align-items-center">
                     <h5 class="w-75 text-blue-gray m-0 p-3 text-start fw-semibold">Users Configuration Menu</h5>
                     <i class="w-25 border-start h-100 d-flex justify-content-center align-items-center p-2 text-orange fs-2 fa-solid fa-users"></i>
                 </div>
-                <span class="p-2 text-secondary bg-transparent border-top small">Configure and manage existing users and their permissions</span>
+                <span class="p-2 text-secondary bg-light border-top small">Configure and manage existing users and their permissions</span>
             </button>
         </div>
 
