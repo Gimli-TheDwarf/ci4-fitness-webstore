@@ -1,0 +1,15 @@
+<IfModule mod_authz_core.c>
+    <FilesMatch "^\.">
+        Require all denied
+    </FilesMatch>
+</IfModule>
+
+<IfModule !mod_authz_core.c>
+    <FilesMatch "^\.">
+        Order allow,deny
+        Deny from all
+    </FilesMatch>
+</IfModule>
+
+RedirectMatch 404 "^/(\.git|\.vscode|app|writable|vendor|tests|node_modules)(/|$)"
+RedirectMatch 404 "^/frontend/(src|node_modules|\.vscode)(/|$)"

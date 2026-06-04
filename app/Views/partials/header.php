@@ -9,7 +9,7 @@
         </a>
 
         <div id="delivery-info" class="d-flex flex-column text-white lh-sm">
-          <span class="small opacity-75">Deliver to <strong class="opacity-100"><?= $username ?></strong></span>
+          <span class="small opacity-75">Deliver to <strong class="opacity-100"><?= esc($username) ?></strong></span>
           <a href="<?= base_url('checkout') ?>" class="btn btn-sm btn-outline-light d-inline-flex align-items-center justify-content-center gap-2 fw-semibold py-1 px-2">
             <i class="bi bi-truck"></i>
             <span>Delivery</span>

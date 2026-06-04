@@ -11,7 +11,16 @@ class CartController extends BaseController
     {
         $productsUsersModel = new \App\Models\UsersProductsModel();
 
-        $person = session()->get('user_id');
+        $person = (int) session()->get('user_id');
+        $id = (int) $id;
+
+        if ($person <= 0 || $id <= 0) 
+            {
+            return $this->response->setStatusCode(422)->setJSON([
+                'error' => true,
+                'message' => 'Valid user and product IDs are required.',
+            ]);
+        }
 
         $productsUsersModel->where('person_id', $person)->where('product_id', $id)->delete();
 
@@ -30,7 +39,17 @@ class CartController extends BaseController
     {
         $productsUsersModel = new \App\Models\UsersProductsModel();
 
-        $person = session()->get('user_id');
+        $person = (int) session()->get('user_id');
+        $id = (int) $id;
+        $quantity = (int) $quantity;
+
+        if ($person <= 0 || $id <= 0 || $quantity <= 0) 
+            {
+            return $this->response->setStatusCode(422)->setJSON([
+                'error' => true,
+                'message' => 'Valid user, product, and quantity values are required.',
+            ]);
+        }
 
         $checkIfExists = $productsUsersModel->where('person_id', $person)->where('product_id', $id)->first();
 
@@ -63,10 +82,28 @@ class CartController extends BaseController
     {
         $productsUsersModel = new \App\Models\UsersProductsModel();
 
-        $person = session()->get('user_id');
+        $person = (int) session()->get('user_id');
+        $id = (int) $id;
+        $change = (int) $change;
+
+        if ($person <= 0 || $id <= 0 || ! in_array($change, [-1, 1], true)) 
+            {
+            return $this->response->setStatusCode(422)->setJSON([
+                'error' => true,
+                'message' => 'Valid user, product, and quantity change values are required.',
+            ]);
+        }
 
         $productsUsersModel->updatePersonProduct($person, $id, $change);
         $quantity = $productsUsersModel->where('person_id', $person)->where('product_id', $id)->first();    
+
+        if (! $quantity) 
+            {
+            return $this->response->setStatusCode(404)->setJSON([
+                'error' => true,
+                'message' => 'Cart item was not found.',
+            ]);
+        }
 
         log_message('info', "______");
 

@@ -28,7 +28,7 @@
     <?= json_encode([
         'tags'     => $info['tags'],
         'products' => $info['products'],
-    ], JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) ?>
+    ], JSON_HEX_TAG|JSON_HEX_APOS|JSON_HEX_AMP|JSON_HEX_QUOT|JSON_UNESCAPED_UNICODE|JSON_UNESCAPED_SLASHES) ?>
 </script>
 
 <script src="<?= base_url('js/toastScript.js') ?>" defer></script> <!-- TOAST SCRIPT -->

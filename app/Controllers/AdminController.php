@@ -9,6 +9,11 @@ class AdminController extends BaseController
 {
     public function adminView()
     {
+        if(!session()->get('isLoggedIn') || session()->get('role') !== 'administrator')
+        {
+            return redirect()->to('logout');
+        }
+
         $info = [];
 
         $usersModel = new \App\Models\UserModel();
@@ -16,7 +21,7 @@ class AdminController extends BaseController
         $tagsModel = new \App\Models\TagModel();
         $productsImagesModel = new \App\Models\ProductsImagesModel();
 
-        $users = $usersModel->findAll();
+        $users = $usersModel->select('id, username, email, phone, address, full_name, role, email_verified, is_active, created_at, updated_at')->findAll();
         $products = $productsModel->findAll();
         $tags = $tagsModel->findAll();
 
@@ -36,11 +41,6 @@ class AdminController extends BaseController
             'tags' => $tags
         ]; 
 
-        if(!session()->get('isLoggedIn') || session()->get('role') !== 'administrator')
-        {
-            return redirect()->to('logout');
-        }
-        
         return view('Admin', 
         [
             'adminInfo' => $info,
@@ -56,15 +56,14 @@ class AdminController extends BaseController
         $postData = $this->request->getPost();
         $images = $this->request->getFileMultiple('images'); //accessing the array images[]
         $status = isset($postData['status']) ? 1 : 0;
-        
-        $id = $productsModel->insert(
-        [
-            'name' => $postData['name'],
-            'description' => $postData['description'],
-            'price' => $postData['price'],
-            'status' => $status,
-            'discount_percentage' => $postData['discount_percentage']
-        ]);
+
+        foreach (['name', 'description', 'price', 'discount_percentage'] as $field) 
+            {
+            if (! isset($postData[$field]) || trim((string) $postData[$field]) === '') 
+                {
+                    return $this->returnFunction(true, 'Required product fields are missing.');
+                }
+        }
 
         foreach((array) $images as $i => $imageFile)
         {
@@ -76,10 +75,23 @@ class AdminController extends BaseController
                 // if it fails, $this->validator->getErrors() returns errors from that most recent validate call (or the current field)
                 return $this->returnFunction(true, $errors);
             }
+        }
+        
+        $id = $productsModel->insert(
+        [
+            'name' => trim((string) $postData['name']),
+            'description' => trim((string) $postData['description']),
+            'price' => (float) $postData['price'],
+            'status' => $status,
+            'discount_percentage' => (float) $postData['discount_percentage']
+        ]);
+
+        foreach((array) $images as $i => $imageFile)
+        {
             // $filename = $imageFile->getTempName();
             // $imageSize = @getimagesize($filename);
             // log_message('info' , 'image size: ' . json_encode($imageSize));
-            $imageName = $imageFile->getName();
+            $imageName = $imageFile->getRandomName();
             $productsImagesModel->insert(
             [
                 'item_id' => $id,
@@ -100,9 +112,16 @@ class AdminController extends BaseController
         $info = $this->request->getJSON(true);
 
         $id = $info['id'] ?? null;
-        $name = $info['name'] ?? null;
+        $name = trim((string) ($info['name'] ?? ''));
 
         log_message("info", json_encode($info));
+
+        if (! $id || $name === '') {
+            return $this->response->setStatusCode(422)->setJSON([
+                'error' => true,
+                'message' => 'Valid tag ID and name are required.',
+            ]);
+        }
 
         $updatedTag = $tagsModel->update($id, [
             'name' => $name,
@@ -131,9 +150,9 @@ class AdminController extends BaseController
         $tagsModel = new \App\Models\TagModel();
         $info = $this->request->getJSON(true);
         log_message('info', 'info thing: '. json_encode($info));
-        $id = $info['tag_id'] ?? null; 
+        $id = (int) ($info['tag_id'] ?? 0); 
         log_message('info', 'id: '. json_encode($id));
-        if ($id)
+        if ($id > 0)
         {
             $tagsModel->delete($id);
             return $this->response->setStatusCode(200)->setJSON([
@@ -155,11 +174,11 @@ class AdminController extends BaseController
         $tagsModel = new \App\Models\TagModel();
         $info = $this->request->getJSON(true);
 
-        $nameSection = $info['tag_name'] ?? null;
+        $nameSection = trim((string) ($info['tag_name'] ?? ''));
 
         log_message('info', 'NAME OF TAG: '. json_encode($info));
 
-        if ($nameSection)
+        if ($nameSection !== '')
         {
             $tagsModel->insert([
                 'name' => $nameSection,
@@ -187,15 +206,20 @@ class AdminController extends BaseController
 
         $infoArray = $this->request->getJSON(true);
         $tagsValue = [];
+        $allowedProductFields = ['name', 'description', 'price', 'status', 'discount_percentage'];
 
         log_message('info', 'stuff test yadayadayada: ' . json_encode($infoArray));
+
+        if (! is_array($infoArray)) {
+            return $this->returnFunction(true, 'Invalid product update payload.');
+        }
 
         foreach($infoArray as $array)
         {
 
             log_message('info' ,'ARRAY:' . json_encode($array));
-            $id = $array["id"] ?? null;
-            if($id === null || trim($id) === '')
+            $id = (int) ($array["id"] ?? 0);
+            if($id <= 0)
             {
                 return $this->returnFunction(true, "No Id provided, contact a developer.");
             }
@@ -205,12 +229,16 @@ class AdminController extends BaseController
                 if ($key == "tags")
                 {
                     $productTagsModel->where('item_id', $id)->delete();
-                    foreach($value as $val)
+                    foreach((array) $value as $val)
                     {
                         log_message('info', 'tag value: ' . json_encode($val));
+                        $tagId = (int) $val;
+                        if ($tagId <= 0) {
+                            continue;
+                        }
                         $productTagsModel->insert([
                             'item_id' => $id,
-                            'tag_id' => $val
+                            'tag_id' => $tagId
                         ]);
                     }
                 }
@@ -222,6 +250,10 @@ class AdminController extends BaseController
 
                 else
                 {
+                    if (! in_array($key, $allowedProductFields, true)) {
+                        continue;
+                    }
+
                     log_message('info' ,'ID:' . json_encode($id));
                     log_message('info' ,'VALUE:' . json_encode($value));
                     log_message('info' ,'KEY:' . json_encode($key));
@@ -278,9 +310,16 @@ class AdminController extends BaseController
         $productsImagesModel = new \App\Models\ProductsImagesModel();
         $params = $this->request->getJSON(true);
         log_message('info', 'here 1: '.json_encode($params));
+
+        if (! is_array($params) || empty($params['id']) || empty($params['img']) || empty($params['slot'])) 
+        {
+            return $this->returnFunction(true, 'Valid image information is required.');
+        }
+
+        $imageName = basename((string) $params['img']);
         
-        $productsImagesModel->removeProductImage((int) $params['id'], (string) $params['img'], (int) $params['slot']);
-        $fileName = FCPATH . '/images/productsImages/' . $params['img'];
+        $productsImagesModel->removeProductImage((int) $params['id'], $imageName, (int) $params['slot']);
+        $fileName = FCPATH . 'images/productsImages/' . $imageName;
         if(is_file($fileName))
         {
             unlink($fileName);
@@ -299,6 +338,11 @@ class AdminController extends BaseController
         $productsImagesModel = new \App\Models\ProductsImagesModel();
         $formData = $this->request->getPost('items');
         $parsedData = [];
+
+        if (! is_array($formData)) 
+        {
+            return $this->returnFunction(true, 'No image update data was provided.');
+        }
         
         foreach($formData as $index => $dataCell)
         {
@@ -335,7 +379,7 @@ class AdminController extends BaseController
 
             if ($oldImage && $file && $file->hasMoved()) 
             {
-                $oldPath = FCPATH . 'images/productsImages/' . $oldImage;
+                $oldPath = FCPATH . 'images/productsImages/' . basename((string) $oldImage);
                 log_message('info' ,'old thing: '.json_encode($oldPath));
 
                 if (is_file($oldPath)) 

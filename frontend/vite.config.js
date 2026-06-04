@@ -11,8 +11,20 @@ export default defineConfig(
   },
 
   plugins: [svelte()],  // tell Vite “use the Svelte plugin” during dev and build
+  publicDir: false,
   build: // start the section of settings used when you run `vite build`
   {
     outDir: 'public', //tells vite where to place the final optimized files
+    emptyOutDir: false,
+    rollupOptions:
+    {
+      input: './src/index.js',
+      output:
+      {
+        entryFileNames: 'assets/index.js',
+        chunkFileNames: 'assets/[name].js',
+        assetFileNames: 'assets/[name][extname]',
+      },
+    },
   },
 });

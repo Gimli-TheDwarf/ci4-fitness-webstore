@@ -102,6 +102,15 @@ class HomeController extends BaseController
 
     public function loadImages($folder)
     {
+        if (! preg_match('/^[a-zA-Z0-9_-]+$/', $folder)) 
+            {
+            return $this->response->setStatusCode(400)->setJSON([
+                'error' => true,
+                'message' => 'Invalid folder name',
+                'data' => '',
+            ]);
+        }
+
         $pathToFolder = FCPATH . 'images/' . $folder . '/';
         $images = [];
 
@@ -148,12 +157,12 @@ class HomeController extends BaseController
         
             FROM users_products AS up
             LEFT JOIN products AS p ON p.id = up.product_id
-            WHERE up.person_id = {$id}
+            WHERE up.person_id = ?
 
         GROUP BY up.person_id, p.name
         ";
 
-        $query = $db->query($sql);
+        $query = $db->query($sql, [$id]);
         $result = $query->getResultArray();
         foreach($result as $i => $item)
         {
@@ -247,8 +256,8 @@ class HomeController extends BaseController
         $userFavoriteModel = new \App\Models\UserFavoriteModel();
 
         $data = $this->request->getJSON(true);
-        $item_id = $data['item_id'] ?? null;
-        $user_id = session()->get('user_id');
+        $item_id = (int) ($data['item_id'] ?? 0);
+        $user_id = (int) session()->get('user_id');
 
         
         log_message('info', 'user and item ids: ' . json_encode(
@@ -257,6 +266,15 @@ class HomeController extends BaseController
             'user_id' => $user_id,
             'item_id' => $item_id
         ]));
+
+        if ($item_id <= 0 || $user_id <= 0) 
+            {
+            return $this->response->setStatusCode(422)->setJSON(
+            [
+                'error' => true,
+                'message' => 'Valid user and item IDs are required.'
+            ]);
+        }
 
         if ($status === 'delete') 
         {
@@ -302,10 +320,73 @@ class HomeController extends BaseController
                 'message' => 'Invalid JSON body.'
             ]);
         }
-        $userId = session()->get('user_id');
+        $userId = (int) session()->get('user_id');
+        $allowedFields = ['username', 'email', 'phone', 'address', 'full_name'];
+        $updateData = array_intersect_key($data, array_flip($allowedFields));
+
+        if ($updateData === []) 
+            {
+            return $this->response->setStatusCode(422)->setJSON(
+            [
+                'error' => true,
+                'message' => 'No valid account fields were provided.'
+            ]);
+        }
+
+        if (isset($updateData['email'])) 
+            {
+            $updateData['email'] = trim((string) $updateData['email']);
+        }
+
+        if (isset($updateData['email']) && ! filter_var($updateData['email'], FILTER_VALIDATE_EMAIL)) {
+            return $this->response->setStatusCode(422)->setJSON(
+            [
+                'error' => true,
+                'message' => 'A valid email address is required.'
+            ]);
+        }
+
+        if (array_key_exists('username', $updateData)) 
+            {
+            $updateData['username'] = trim((string) $updateData['username']);
+            if ($updateData['username'] === '')
+                {
+                return $this->response->setStatusCode(422)->setJSON(
+                [
+                    'error' => true,
+                    'message' => 'Username cannot be empty.'
+                ]);
+            }
+        }
+
+        if (isset($updateData['email'])) 
+            {
+            $existingUser = $userModel->where('email', $updateData['email'])->where('id !=', $userId)->first();
+            if ($existingUser) 
+                {
+                return $this->response->setStatusCode(422)->setJSON(
+                [
+                    'error' => true,
+                    'message' => 'Email is already in use.'
+                ]);
+            }
+        }
+
+        if (isset($updateData['username'])) 
+            {
+            $existingUser = $userModel->where('username', $updateData['username'])->where('id !=', $userId)->first();
+            if ($existingUser) 
+                {
+                return $this->response->setStatusCode(422)->setJSON(
+                [
+                    'error' => true,
+                    'message' => 'Username is already in use.'
+                ]);
+            }
+        }
 
         log_message("info", 'data check: ' .json_encode($data));
-        $userModel->update($userId, $data);
+        $userModel->update($userId, $updateData);
 
         return $this->response->setStatusCode(200)->setJSON(
         [

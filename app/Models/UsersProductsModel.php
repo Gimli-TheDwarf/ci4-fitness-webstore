@@ -25,11 +25,9 @@ class UsersProductsModel extends Model
 
     public function updatePersonProduct(int $person_id, int $product_id, int $quantity): void
     {
-        $builder = $this->db->table('users_products');
-
-        $builder->set('quantity', "quantity + $quantity", false)
-        ->where('person_id', $person_id)
-        ->where('product_id', $product_id)
-        ->update();
+        $this->db->query(
+            'UPDATE users_products SET quantity = GREATEST(quantity + ?, 0) WHERE person_id = ? AND product_id = ?',
+            [$quantity, $person_id, $product_id]
+        );
     }
 }
