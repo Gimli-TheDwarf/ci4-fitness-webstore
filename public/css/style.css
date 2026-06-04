@@ -19,6 +19,7 @@ html, body
 {
     min-height: 100vh;
 }
+
 .text-shadow
 {
     text-shadow: 0.5px 0.5px 1px black;

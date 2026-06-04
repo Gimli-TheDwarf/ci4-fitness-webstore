@@ -6,26 +6,27 @@
     <?= view('partials/toast') ?>
 
         <section class="homepage-products w-100 min-vh-100 d-flex justify-content-center align-items-center px-3 py-4">
-        <div class="d-flex flex-column justify-content-center align-items-center body-wrapper">
-            <div id="MainContainer" class="d-flex justify-content-center shadow align-items-stretch flex-row rounded-2 overflow-hidden border bg-light">
+        <div class="container d-flex flex-column justify-content-center align-items-center min-vh-100">
+            <div id="MainContainer" class="row justify-content-center align-items-stretch rounded-2 overflow-hidden w-100">
+                <div class="col-12 col-sm-10 col-md-7 col-lg-5 col-xl-4 p-0 shadow border bg-light rounded-2 overflow-hidden">
 
-                <form id="LogInForm" method="post" action="<?= base_url("login_info")?>" class="d-flex flex-column align-items-center justify-content-center bg-light mb-0 p-4">
+                <form id="LogInForm" method="post" action="<?= base_url("login_info")?>" class="d-flex flex-column align-items-center justify-content-center bg-light mb-0 p-4 w-100 gap-2">
 
                     <h3 class="text-dark text-center fw-semibold mb-3 d-inline-flex align-items-center gap-2">
                         <i class="bi bi-box-arrow-in-right"></i><span>Log In</span>
                     </h3>
 
                     <label for="email" class="w-100 text-start fw-semibold small mb-1 d-inline-flex align-items-center gap-2"><i class="bi bi-envelope-at opacity-75"></i><span>E-Mail</span></label>
-                    <input id="email" name="email" type="email" required autocomplete="email" class="rounded-1 form-control" placeholder="name@example.com" maxlength="254"><br>
+                    <input id="email" name="email" type="email" required autocomplete="email" class="rounded-1 form-control" placeholder="name@example.com" maxlength="254">
 
                     <label for="password" class="w-100 text-start fw-semibold small mb-1 d-inline-flex align-items-center gap-2"><i class="bi bi-lock opacity-75"></i><span>Password</span></label>
-                    <input id="password" name="password" type="password" required minlength="8" maxlength="64" autocomplete="current-password" class="hiddenPassword rounded-1 form-control" placeholder="Password"><br>
+                    <input id="password" name="password" type="password" required minlength="8" maxlength="64" autocomplete="current-password" class="hiddenPassword rounded-1 form-control" placeholder="Password">
 
                     <button type="button" id="showPasswordButton" class="w-100 rounded-1 btn btn-outline-secondary fw-semibold d-inline-flex justify-content-center align-items-center gap-2 shadow-sm" onclick="showPassword()">
                         <i class="bi bi-eye"></i><span>Show Password</span>
-                    </button><br>
+                    </button>
 
-                    <input type="submit" value="Proceed" class="w-100 rounded-1 btn btn-success fw-semibold shadow-sm"><br>
+                    <input type="submit" value="Proceed" class="w-100 rounded-1 btn btn-success fw-semibold shadow-sm">
 
                     <p class="d-flex justify-content-center align-items-center text-center mb-2 small opacity-75">Or Log In With</p>
 
@@ -37,6 +38,7 @@
 
                 </form>
 
+                </div>
             </div>
 
             <div class="d-flex flex-column justify-content-center align-items-center mt-3 mb-2">
@@ -48,7 +50,7 @@
             </div>
 
             <div class="w-100 d-flex justify-content-center mb-3">
-                <span class="text-white fw-semibold small text-uppercase letter-spacing-1">Lave™</span>
+                <span class="text-white fw-semibold small text-uppercase letter-spacing-1">Lave&trade;</span>
             </div>
         </div>
         </section>
