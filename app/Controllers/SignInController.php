@@ -84,7 +84,7 @@ class SignInController extends BaseController
         $password = (string) ($data['password'] ?? '');
         $user = $userModel->where('email', $email)->first();
         
-        if ($user && (int) $user['is_active'] === 1 && password_verify($password, $user['password']))
+        if ($user && (int) ($user['is_active'] ?? 1) === 1 && password_verify($password, $user['password']))
         {
             $cartCount = $productsUsersModel->getCartCount($user['id']);
 
@@ -159,7 +159,7 @@ class SignInController extends BaseController
 
             }
 
-            if ((int) $user['is_active'] !== 1) 
+            if ((int) ($user['is_active'] ?? 1) !== 1) 
             {
                 return redirect()->to('login')->with('error', 'Invalid Credentials.');
             }

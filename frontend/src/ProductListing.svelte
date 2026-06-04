@@ -3,7 +3,7 @@
     import { baseURLStore, tagsStore, updateProducts ,productsStore, removeProduct } from './stores/store-products.js'
     import 'select2';
     import jquery from 'jquery';
-    let { mode, passedProduct } = $props()
+    let { mode, passedProduct, locationSelection = () => {} } = $props()
 
     let Select2Element;
     let cost = $state(0.01);
@@ -361,6 +361,40 @@
         checkboxLabel = undoChangesInfo.status == "1" ? true : false;
     }
 
+    function deleteProduct()
+    {
+        if(!product?.id)
+        {
+            notify("No product was selected.");
+            return;
+        }
+
+        if(!window.confirm("Delete this product and all of its images? This cannot be undone."))
+        {
+            return;
+        }
+
+        jquery.ajax({
+            url: 'deleteProduct',
+            method: 'DELETE',
+            dataType: 'json',
+            data: JSON.stringify({ id: product.id }),
+            contentType: 'application/json',
+
+            success: function(response)
+            {
+                notify(response.message);
+                removeProduct(product.id);
+                locationSelection('products');
+            },
+            error: function(jqXHR)
+            {
+                let message = jqXHR.responseJSON?.message ?? 'Product was not deleted.';
+                notify(message);
+            }
+        });
+    }
+
     function updateSelection()
     {
         let form = document.querySelector("#productsForm");
@@ -515,6 +549,12 @@
                             <i class="fa-solid fa-arrow-left"></i><span>Return</span>
                         </button>
                     </a>
+
+                    <div class="border-top pt-2 mt-1">
+                        <button type="button" class="w-100 btn btn-outline-danger rounded-2 fw-semibold d-inline-flex justify-content-center align-items-center gap-2" on:click|preventDefault={() => deleteProduct()}>
+                            <i class="fa-solid fa-trash"></i><span>Delete Product</span>
+                        </button>
+                    </div>
                 </div>
 
             </div>

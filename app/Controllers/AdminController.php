@@ -21,7 +21,18 @@ class AdminController extends BaseController
         $tagsModel = new \App\Models\TagModel();
         $productsImagesModel = new \App\Models\ProductsImagesModel();
 
-        $users = $usersModel->select('id, username, email, phone, address, full_name, role, email_verified, is_active, created_at, updated_at')->findAll();
+        $userFields = ['id', 'username', 'email', 'phone', 'address', 'full_name', 'role', 'created_at', 'updated_at'];
+        $db = \Config\Database::connect();
+
+        foreach (['email_verified', 'is_active'] as $field) 
+        {
+            if ($db->fieldExists($field, 'users')) 
+            {
+                $userFields[] = $field;
+            }
+        }
+
+        $users = $usersModel->select(implode(', ', $userFields))->findAll();
         $products = $productsModel->findAll();
         $tags = $tagsModel->findAll();
 
@@ -273,6 +284,42 @@ class AdminController extends BaseController
 
         log_message('info', 'info return: ' . json_encode($products));
         return $this->returnFunction(false, "Successfully updated field values", ["data" => $products]);
+    }
+
+    public function deleteProduct()
+    {
+        $productsModel = new \App\Models\ProductModel();
+        $productsImagesModel = new \App\Models\ProductsImagesModel();
+
+        $info = $this->request->getJSON(true);
+        $id = (int) ($info['id'] ?? 0);
+
+        if ($id <= 0) {
+            return $this->returnFunction(true, 'Valid product ID is required.');
+        }
+
+        if (! $productsModel->find($id)) {
+            return $this->returnFunction(true, 'Product was not found.');
+        }
+
+        $images = $productsImagesModel->retrieveImages($id, false);
+
+        if (! $productsModel->delete($id)) {
+            return $this->returnFunction(true, 'Product was not deleted.');
+        }
+
+        foreach ($images as $image) {
+            $imagePath = FCPATH . 'images/productsImages/' . basename((string) ($image['img'] ?? ''));
+            if (is_file($imagePath)) {
+                unlink($imagePath);
+            }
+        }
+
+        return $this->response->setStatusCode(200)->setJSON([
+            'error' => false,
+            'message' => 'Product and its images were successfully deleted.',
+            'product_id' => $id,
+        ]);
     }
 
     public function findItemTags()

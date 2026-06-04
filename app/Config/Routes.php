@@ -50,5 +50,6 @@ $routes->patch('changeProducts', 'AdminController::alterProduct', ['filter' => '
 // Admin / Product 
 $routes->get('GetItemTags', 'AdminController::findItemTags', ['filter' => 'admin']);
 $routes->get('retrieveProductImages', 'AdminController::findItemImages', ['filter' => 'admin']);
+$routes->delete('deleteProduct', 'AdminController::deleteProduct', ['filter' => 'admin']);
 $routes->delete('deleteProductImage', 'AdminController::removeItemImage', ['filter' => 'admin']);
 $routes->post('updateImage', 'AdminController::updateItemImages', ['filter' => 'admin']);
