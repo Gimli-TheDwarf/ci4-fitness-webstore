@@ -10,15 +10,16 @@ class AdminFilter implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
-        if (! session()->get('isLoggedIn')) {
-            return redirect()->to('login')->with('error', 'Please log in first.');
+        if (session()->get('isLoggedIn') && session()->get('role') === 'administrator') 
+        {
+            return null;
         }
 
-        if (session()->get('role') !== 'administrator') {
-            return redirect()->to('homepage')->with('error', 'Administrator access required.');
-        }
-
-        return null;
+        return service('response')->setStatusCode(403)->setJSON(
+        [
+            'error' => true,
+            'message' => 'Administrator access is required.',
+        ]);
     }
 
     public function after(RequestInterface $request, ResponseInterface $response, $arguments = null)
