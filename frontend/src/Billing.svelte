@@ -13,14 +13,37 @@ let item;
 let BillingInfo = {};
 let DeliveryInfo = {};
 
+function getSessionInfo(name)
+{
+    try
+    {
+        return JSON.parse(sessionStorage.getItem(name)) ?? {};
+    }
+    catch
+    {
+        return {};
+    }
+}
+
+function hasDeliverySelection()
+{
+    return Boolean(DeliveryInfo["Delivery Type"]);
+}
+
 onMount(() => 
 {
     divItems = document.querySelectorAll('#page-container div');
     item = divItems[2];
     item.classList.remove("opacity-75");
 
-    BillingInfo = JSON.parse(sessionStorage.getItem("Billing")) ?? {};
-    DeliveryInfo = JSON.parse(sessionStorage.getItem("Delivery")) ?? {};
+    BillingInfo = getSessionInfo("Billing");
+    DeliveryInfo = getSessionInfo("Delivery");
+
+    if (!hasDeliverySelection())
+    {
+        onNext('./checkout');
+    }
+
     console.log(BillingInfo);
 });
 
@@ -65,7 +88,7 @@ function handleSubmit(e)
                         </div>
 
                     {/each}
-                    <a class="mt-auto link-opacity-100-hover link-offset-2 fw-bold" href="./delivery">Edit</a>
+                    <a class="mt-auto link-opacity-100-hover link-offset-2 fw-bold" href="./checkout">Edit</a>
                 </div>
             </div>
 

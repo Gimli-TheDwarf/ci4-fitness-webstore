@@ -11,6 +11,8 @@ import {onPrev, onNext} from './ManeuverFunctions.js';
 let divItems;
 let item;
 
+const requiredDeliveryFields = ['Delivery Type', 'City', 'Terminal', 'Name', 'Surname', 'Phone Number'];
+
 onMount(() => 
 {
     divItems = document.querySelectorAll('#page-container div');
@@ -39,33 +41,39 @@ onDestroy(() =>
     item.classList.add("opacity-75");
 });
 
-function affirmSelection(target)
-{
-    let parentDiv = target.closest("#base-info")
-    let inputs = [...parentDiv.querySelectorAll('.input-checkbox')].filter(inp => inp !== target);
-    console.log("inputs:" , inputs)
-    let isEnabled = target.checked;
-
-    inputs.forEach(element => 
-    {
-        element.disabled = isEnabled;
-    });
-}
-
 function handleSubmit(e)
 {
-    e.preventDefault();    
+    e.preventDefault();
+    let form = e.currentTarget;
+    let selectedDeliveryType = form.querySelector('input[name="Delivery Type"]:checked');
+
+    if (!selectedDeliveryType)
+    {
+        form.querySelector('input[name="Delivery Type"]')?.reportValidity();
+        return;
+    }
+
     let formData = {};
 
-    jQuery('#base-info').find('input, select').each(function() 
+    jQuery(form).find('input, select').each(function() 
     {
         let name = this?.name; 
         let value = this?.value;
 
+        if ((this.type === 'checkbox' || this.type === 'radio') && !this.checked) return
         if (!name || !value) return
 
         formData[name] = value
     });
+
+    let missingField = requiredDeliveryFields.find(field => !formData[field]);
+
+    if (missingField)
+    {
+        form.querySelector(`[name="${missingField}"]`)?.reportValidity();
+        return;
+    }
+
     sessionSet('Delivery', formData)
     onNext('./delivery');
 }
@@ -82,25 +90,25 @@ function handleSubmit(e)
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-4 border rounded-2 p-3 bg-white shadow-sm">
-                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="Omniva Parcel" id="checkbox-option1" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="radio" value="Omniva Parcel" id="checkbox-option1" required>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option1">Delivery to an Omniva parcel locker: 2-3 days.</label>
                 <span class="ms-auto">2.99 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-2 border rounded-2 p-3 bg-white shadow-sm">
-                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="DPD Parcel" id="checkbox-option2" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="radio" value="DPD Parcel" id="checkbox-option2" required>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option2">Delivery to a DPD parcel locker: 2-3 days.</label>
                 <span class="ms-auto">2.99 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-2 border rounded-2 p-3 bg-white shadow-sm">
-                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="SmartPosti Parcel" id="checkbox-option3" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="radio" value="SmartPosti Parcel" id="checkbox-option3" required>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option3">Delivery to a SmartPosti parcel locker: 2-3 days.</label>
                 <span class="ms-auto">4.00 €</span>
             </div>
 
             <div class="d-flex w-100 flex-row justify-content-start align-items-center gap-2 mt-2 border rounded-2 p-3 bg-white shadow-sm mb-4">
-                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="checkbox" value="DPD Courier Delivery" id="checkbox-option4" on:click={(e) => affirmSelection(e.currentTarget)}>
+                <input name="Delivery Type" class="input-checkbox fs-3 m-0 form-check-input" type="radio" value="DPD Courier Delivery" id="checkbox-option4" required>
                 <label class="d-flex h-100 text-center align-items-center" for="checkbox-option4">Home delivery with a DPD courier in 2-3 days.</label>
                 <span class="ms-auto">5.59 €</span>
             </div>
@@ -129,18 +137,18 @@ function handleSubmit(e)
                     <div class="d-flex w-100 flex-column flex-md-row justify-content-center align-items-center gap-4">
                         <div class="flex-fill w-100 d-flex flex-column justify-content-center align-items-start">
                             <label for="name-input">Name</label>
-                            <input name="Name" type="text" class="form-control" id="name-input" required>
+                            <input name="Name" type="text" class="form-control" id="name-input" autocomplete="given-name" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ž' -]{2,50}" title="Use 2 to 50 letters." required>
                         </div>
 
                         <div class="flex-fill w-100 d-flex flex-column justify-content-center align-items-start">
                             <label for="surname-input">Surname</label>
-                            <input name="Surname" type="text" class="form-control" id="surname-input" required>
+                            <input name="Surname" type="text" class="form-control" id="surname-input" autocomplete="family-name" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ž' -]{2,50}" title="Use 2 to 50 letters." required>
                         </div>
                     </div>
                     
                     <div class="w-100 d-flex flex-column justify-content-center align-items-start">
                         <label for="phone-input">Phone Number</label>
-                        <input name="Phone Number" type="tel" class="form-control" id="phone-input" required>
+                        <input name="Phone Number" type="tel" class="form-control" id="phone-input" autocomplete="tel" inputmode="tel" minlength="7" maxlength="20" pattern="[+]?[0-9][0-9 ().-]{6,19}" title="Use a valid phone number, for example +371 20000000." required>
                     </div>
                 </div>
             </div>
