@@ -27,6 +27,7 @@ $routes->get('account', 'HomeController::returnAccount', ['filter' => 'auth']);
 $routes->patch('alter-account', 'HomeController::changeAccountSettings', ['filter' => 'auth']);
 
 // Home / Data
+$routes->get('loadImages/(:segment)', 'HomeController::loadImages/$1');
 $routes->get('loadImages(:segment)', 'HomeController::loadImages/$1');
 $routes->get('retrieveBasicInfo', 'HomeController::retrieveInfo');
 

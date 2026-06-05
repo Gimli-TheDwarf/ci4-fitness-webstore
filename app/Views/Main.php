@@ -63,9 +63,10 @@
         function ImagesLoad()
         {
             var imageArray = [];
+            const imageBaseUrl = "<?= base_url('images/homePageImages/') ?>";
 
             $.ajax({
-                url: '<?= base_url('loadImages') ?>' + 'homePageImages',
+                url: '<?= base_url('loadImages/homePageImages') ?>',
                 method: 'GET',
                 dataType: 'JSON',
 
@@ -74,8 +75,7 @@
                     console.log(response.message);
                     response.data.forEach(function(image) 
                     {
-                        imageArray.push('images/homePageImages/' + image);
-                        //'<img src="<?= base_url('images/homePageImages/') ?>' + image + '" class="img-thumbnail m-2"/>';
+                        imageArray.push(imageBaseUrl + encodeURIComponent(image));
                     });
                     loadImages(imageArray);
                 },
@@ -91,7 +91,6 @@
         {
             const carouselContainer  = document.getElementById("carouselSlides");
             const indicators = document.getElementById("carousel-indicator-container");
-            const baseUrl = "<?= base_url()?>";
 
             carouselContainer.innerHTML = '';
             indicators.innerHTML = '';
@@ -118,7 +117,7 @@
 
                 item.innerHTML = 
                 `
-                    <img src="${baseUrl}${image}" class="homepage-carousel-image d-block w-100 object-fit-cover" alt="Slide ${i + 1}">
+                    <img src="${image}" class="homepage-carousel-image d-block w-100 object-fit-cover" alt="Slide ${i + 1}">
                     <div class="carousel-caption d-none d-md-block">
                         <h5 class="fw-semibold text-shadow mb-1">Lave</h5>
                         <p class="mb-0 small opacity-75">Selected fitness products and practical essentials.</p>
