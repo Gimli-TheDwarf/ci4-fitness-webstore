@@ -119,7 +119,7 @@
             <div class="modal-content border-0 rounded-2 overflow-hidden shadow-lg bg-white">
                 <div class="row g-0">
                     <div class="col-12 col-lg-7 bg-blue-gray product-preview-image-panel d-flex justify-content-center align-items-center p-3 position-relative">
-                        <span class="position-absolute top-0 start-0 m-3 badge rounded-pill bg-orange text-white shadow-sm">Product preview</span>
+                        <span class="position-absolute top-0 start-0 mt-4 ms-4 badge rounded-pill bg-orange text-white shadow-sm">Product preview</span>
                         <img src="" alt="preview" class="modalImage w-100 rounded-2 bg-white object-fit-contain shadow-sm" style="max-height: 52vh; aspect-ratio: 4 / 3;">
                     </div>
 

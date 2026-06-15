@@ -19,6 +19,11 @@
     let checkboxLabel = $state(true);
     let undoChangesInfo = $state({ name: '', price: 0, description: '' });
 
+    function isInStock(value)
+    {
+        return value == "1" || value === true;
+    }
+
     $effect(() => 
     {
         const id = passedProduct;
@@ -36,6 +41,7 @@
         if(product)
         {
             status = product.status;
+            checkboxLabel = isInStock(product.status);
             console.log("status: ", status);
 
             undoChangesInfo.name = product.name;
@@ -138,8 +144,6 @@
                     tags = success.data; //START HERE
                     tags.forEach(t => tagNames.push(t.name));
                     jQuery(Select2Element).val(tagNames).trigger('change');
-                    notify(tagNames);
-                    console.log("TAG NAMES: ", tagNames);
                 },
 
                 error: function(jqXHR)
@@ -356,9 +360,9 @@
         jQuery(Select2Element).val(tagNames).trigger('change');
         Price.value = undoChangesInfo.price;
         description.value = undoChangesInfo.description;
-        status.checked = undoChangesInfo.status;
+        status.checked = isInStock(undoChangesInfo.status);
         discount.value = undoChangesInfo.discount_percentage;
-        checkboxLabel = undoChangesInfo.status == "1" ? true : false;
+        checkboxLabel = isInStock(undoChangesInfo.status);
     }
 
     function deleteProduct()
@@ -507,9 +511,9 @@
                 </div>
 
                 <div class="w-100 fw-semibold text-blue-gray form-check form-switch d-flex align-items-center gap-2 border rounded-2 bg-light p-3 ps-5">
-                    <input id="status" checked={status == "1" || status == 1} on:change={(e) => syncCheckbox(e.currentTarget)} type="checkbox" name="status" class="rounded-1 form-check-input product-form-input">
+                    <input id="status" checked={isInStock(status)} on:change={(e) => syncCheckbox(e.currentTarget)} type="checkbox" name="status" class="rounded-1 form-check-input product-form-input">
                     <span>Status:</span>
-                    <span class={checkboxLabel === true ? 'text-success fw-semibold' : 'text-danger fw-semibold'}>{checkboxLabel === true ? 'Enabled' : 'Disabled'}</span>
+                    <span class={checkboxLabel === true ? 'text-success fw-semibold' : 'text-danger fw-semibold'}>{checkboxLabel === true ? 'In Stock' : 'Out of Stock'}</span>
                 </div>
 
             </div>
