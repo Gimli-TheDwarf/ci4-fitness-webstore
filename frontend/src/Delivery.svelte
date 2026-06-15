@@ -84,29 +84,29 @@ function handleSubmit(e)
             <div class="d-flex w-100 flex-column flex-md-row justify-content-center align-items-center gap-4">
                 <div class="flex-fill w-100 d-flex flex-column justify-content-center align-items-start">
                     <label for="name-input">Name</label>
-                    <input name="Name" type="text" class="form-control" id="name-input" autocomplete="given-name" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ž' -]{2,50}" title="Use 2 to 50 letters." required>
+                    <input name="Name" type="text" class="form-control" id="name-input" autocomplete="given-name" minlength="2" maxlength="50" pattern={"[A-Za-zÀ-ž' -]{2,50}"} title="Use 2 to 50 letters." required>
                 </div>
 
                 <div class="flex-fill w-100 d-flex flex-column justify-content-center align-items-start">
                     <label for="surname-input">Surname</label>
-                    <input name="Surname" type="text" class="form-control" id="surname-input" autocomplete="family-name" minlength="2" maxlength="50" pattern="[A-Za-zÀ-ž' -]{2,50}" title="Use 2 to 50 letters." required>
+                    <input name="Surname" type="text" class="form-control" id="surname-input" autocomplete="family-name" minlength="2" maxlength="50" pattern={"[A-Za-zÀ-ž' -]{2,50}"} title="Use 2 to 50 letters." required>
                 </div>
             </div>
 
             <div class="d-flex w-100 flex-column justify-content-center align-items-start pt-4">
                 <label for="tel-input">Phone Number</label>
-                <input name="Phone Number" type="tel" class="form-control" id="tel-input" autocomplete="tel" inputmode="tel" minlength="7" maxlength="20" pattern="[+]?[0-9][0-9 ().-]{6,19}" title="Use a valid phone number, for example +371 20000000." required>
+                <input name="Phone Number" type="tel" class="form-control" id="tel-input" autocomplete="tel" inputmode="tel" minlength="7" maxlength="16" pattern={'\\+?[0-9]{7,15}'} title="Use 7 to 15 digits, with an optional leading +." required>
             </div>
         
             <div class="d-flex w-100 flex-column flex-md-row justify-content-center align-items-center gap-4 pt-4">
                 <div class="flex-fill w-100 d-flex flex-column justify-content-center align-items-start">
                     <label for="city-input">City</label>
-                    <input name="City" type="text" class="form-control" id="city-input" autocomplete="address-level2" minlength="2" maxlength="80" pattern="[A-Za-zÀ-ž' -]{2,80}" title="Use 2 to 80 letters." required>
+                    <input name="City" type="text" class="form-control" id="city-input" autocomplete="address-level2" minlength="2" maxlength="80" pattern={"[A-Za-zÀ-ž' -]{2,80}"} title="Use 2 to 80 letters." required>
                 </div>
 
                 <div class="flex-fill w-100 d-flex flex-column justify-content-center align-items-start">
                     <label for="postal-input">Postal Code</label>
-                    <input name="Postal Code" type="text" class="form-control" id="postal-input" autocomplete="postal-code" minlength="3" maxlength="12" pattern="[A-Za-z0-9 -]{3,12}" title="Use a valid postal code." required>
+                    <input name="Postal Code" type="text" class="form-control" id="postal-input" autocomplete="postal-code" minlength="3" maxlength="12" pattern={"[A-Za-z0-9 -]{3,12}"} title="Use a valid postal code." required>
                 </div>
             </div>
 
