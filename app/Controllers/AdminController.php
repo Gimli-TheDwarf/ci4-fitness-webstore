@@ -67,6 +67,7 @@ class AdminController extends BaseController
         $postData = $this->request->getPost();
         $images = $this->request->getFileMultiple('images'); //accessing the array images[]
         $status = isset($postData['status']) ? 1 : 0;
+        $tagIds = (array) ($postData['tags'] ?? []);
 
         foreach (['name', 'description', 'price', 'discount_percentage'] as $field) 
             {
@@ -96,6 +97,21 @@ class AdminController extends BaseController
             'status' => $status,
             'discount_percentage' => (float) $postData['discount_percentage']
         ]);
+
+        foreach($tagIds as $tagId)
+        {
+            $tagId = (int) $tagId;
+            if($tagId <= 0)
+            {
+                continue;
+            }
+
+            $productTagsModel->insert(
+            [
+                'item_id' => $id,
+                'tag_id' => $tagId
+            ]);
+        }
 
         foreach((array) $images as $i => $imageFile)
         {

@@ -3,11 +3,11 @@
     let { locationSelection } = $props();
     let tags = $state($tagsStore);
     let page = $state(1);
-    let pageSize = $state(14);
+    let pageSize = $state(8);
 
-    let displayProducts = $derived($productsStore.slice((page - 1) * pageSize, (page - 1) * pageSize + 20));
-    //0 * 20, 0 * 20 + 20
-    // 0, 20. displayproducts = [0 -> 20th element] 
+    let displayProducts = $derived($productsStore.slice((page - 1) * pageSize, (page - 1) * pageSize + pageSize));
+    //0 * 8, 0 * 8 + 8
+    // 0, 8. displayproducts = [0 -> 8th element] 
     let maxPage = $state(Math.max(1, Math.ceil($productsStore.length / pageSize)));
     console.log($productsStore);
     

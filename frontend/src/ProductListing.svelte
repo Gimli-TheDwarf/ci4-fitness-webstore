@@ -142,7 +142,7 @@
                 {
                     tagNames = [];
                     tags = success.data; //START HERE
-                    tags.forEach(t => tagNames.push(t.name));
+                    tags.forEach(t => tagNames.push(String(t.id)));
                     jQuery(Select2Element).val(tagNames).trigger('change');
                 },
 
